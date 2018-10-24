@@ -3,7 +3,6 @@ package com.noser.blog.mapper;
 import com.noser.blog.api.ArticleDTO;
 import com.noser.blog.domain.Article;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;

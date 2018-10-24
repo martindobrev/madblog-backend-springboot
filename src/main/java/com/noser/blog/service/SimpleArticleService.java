@@ -30,12 +30,11 @@ public class SimpleArticleService implements ArticleService {
   }
 
   @Override
-  public Mono<ArticleCollectionDTO> getAllArticles(final Principal principal, Authentication authentication) {
+  public ArticleCollectionDTO getAllArticles(final Principal principal, Authentication authentication) {
 
     Iterable<Article> allArticles = articleRepository.findAll();
 
-    return Mono.just(
-        ArticleCollectionDTO.builder()
+    return ArticleCollectionDTO.builder()
         .published(StreamSupport.stream(allArticles.spliterator(), false)
             .filter(article -> article.isPublished())
             .map(article -> articleMapper.domain2dto(article, principal, authentication))
@@ -69,31 +68,30 @@ public class SimpleArticleService implements ArticleService {
 
               return false;
             }).map(article -> articleMapper.domain2dto(article, principal, authentication)).collect(Collectors.toList()))
-        .build()
-    );
+        .build();
   }
 
   @Override
-  public Mono<ArticleDTO> getArticle(Long id, Principal principal, Authentication authentication) {
+  public ArticleDTO getArticle(Long id, Principal principal, Authentication authentication) {
     Optional<Article> articleOptional = articleRepository.findById(id);
     if (articleOptional.isPresent()) {
       final Article article = articleOptional.get();
       if (article.isPublished() || AccessRights.isOwnArticle(article, principal) || AccessRights.canUserEditArticle(authentication)) {
-        return Mono.just(articleMapper.domain2dto(article, principal, authentication));
+        return articleMapper.domain2dto(article, principal, authentication);
       }
     }
     return null;
   }
 
   @Override
-  public Mono<ArticleDTO> createArticle(Article article, Principal principal, Authentication authentication) {
+  public ArticleDTO createArticle(Article article, Principal principal, Authentication authentication) {
     article.setAuthorId(principal.getName());
     article.setCreated(LocalDateTime.now());
-    return Mono.just(articleMapper.domain2dto(articleRepository.save(article), principal, authentication));
+    return articleMapper.domain2dto(articleRepository.save(article), principal, authentication);
   }
 
   @Override
-  public Mono<ArticleDTO> editArticle(Article article, Principal principal, Authentication authentication) throws IllegalAccessException {
+  public ArticleDTO editArticle(Article article, Principal principal, Authentication authentication) throws IllegalAccessException {
     final Optional<Article> existingArticleOptional = articleRepository.findById(article.getId());
     if (existingArticleOptional.get() == null) {
       throw new IllegalAccessException("Unknown article");
@@ -110,6 +108,6 @@ public class SimpleArticleService implements ArticleService {
       throw new IllegalAccessException("Unauthorized access");
     }
     this.articleRepository.save(existingArticle);
-    return Mono.just(articleDTO);
+    return articleDTO;
   }
 }

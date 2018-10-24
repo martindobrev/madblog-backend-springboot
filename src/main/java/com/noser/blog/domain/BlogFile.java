@@ -22,8 +22,8 @@ public class BlogFile {
   @Lob
   private byte[] data;
 
+  private long size;
   private String authorId;
-
+  private String fileType;
   private LocalDateTime uploaded;
-
 }
