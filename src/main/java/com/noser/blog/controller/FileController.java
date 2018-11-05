@@ -1,5 +1,6 @@
 package com.noser.blog.controller;
 
+import com.noser.blog.api.BlogFileCollectionDTO;
 import com.noser.blog.api.BlogFileDTO;
 import com.noser.blog.domain.BlogFile;
 import com.noser.blog.mapper.FileMapper;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Slf4j
@@ -43,10 +45,10 @@ public class FileController {
 
   @PostMapping(value = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody BlogFileDTO uploadFile(@RequestParam("file") MultipartFile file, Principal principal, Authentication authentication) throws Exception {
-    log.info("File uploaded: {}", file.getName());
+    log.info("File uploaded: {}", file.getOriginalFilename());
 
     final BlogFile blogFile = BlogFile.builder()
-        .name(file.getName())
+        .name(file.getOriginalFilename())
         .authorId(principal != null ? principal.getName(): null)
         .data(file.getBytes())
         .uploaded(LocalDateTime.now())
@@ -73,6 +75,14 @@ public class FileController {
 
     httpHeaders.add("Content-Type", ContentType.getByMimeType(file.getFileType()).toString());
     return new ResponseEntity<>(file.getData(), httpHeaders, HttpStatus.OK);
+  }
+
+  @GetMapping(value = "/files")
+  public @ResponseBody BlogFileCollectionDTO getFiles() {
+    final BlogFileCollectionDTO blogFileCollectionDTO = BlogFileCollectionDTO.builder().blogFiles(new ArrayList<>()).build();
+    this.fileService.getFiles(null)
+        .forEach(blogFile -> blogFileCollectionDTO.getBlogFiles().add(this.fileMapper.domain2dto(blogFile)));
+    return blogFileCollectionDTO;
   }
 
   private byte[] createThumbnail(final BlogFile file, int size) throws IOException {

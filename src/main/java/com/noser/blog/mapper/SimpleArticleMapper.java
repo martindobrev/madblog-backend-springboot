@@ -28,6 +28,7 @@ public class SimpleArticleMapper implements ArticleMapper {
         .created(article.getCreated())
         .published(article.isPublished())
         .featured(article.isFeatured())
+        .imageId(article.getImageId())
         .editable(isOwnArticle(article, principal) || canUserEditArticle(authentication))
         .build();
   }
@@ -48,6 +49,7 @@ public class SimpleArticleMapper implements ArticleMapper {
         .subtitle(articleDTO.getSubtitle())
         .published(articleDTO.isPublished())
         .created(articleDTO.getCreated())
+        .imageId(articleDTO.getImageId())
         .build();
   }
 

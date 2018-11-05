@@ -103,6 +103,7 @@ public class SimpleArticleService implements ArticleService {
     existingArticle.setSubtitle(article.getSubtitle());
     existingArticle.setPublished(article.isPublished());
     existingArticle.setFeatured(article.isFeatured());
+    existingArticle.setImageId(article.getImageId());
     ArticleDTO articleDTO = articleMapper.domain2dto(existingArticle, principal, authentication);
     if (false == articleDTO.isEditable()) {
       throw new IllegalAccessException("Unauthorized access");

@@ -13,6 +13,7 @@ public class ArticleDTO {
   private String subtitle;
   private String content;
   private String authorId;
+  private Long imageId;
   private boolean published;
   private boolean featured;
   private boolean editable;

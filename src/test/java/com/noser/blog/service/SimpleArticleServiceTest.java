@@ -43,7 +43,7 @@ public class SimpleArticleServiceTest {
   @Test
   public void testPublishedArticlesAreReturnedCorrectly() {
 
-    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(null, null).block();
+    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(null, null);
 
     assertNotNull(allArticles.getPublished());
     assertEquals(3, allArticles.getPublished().size());
@@ -53,7 +53,7 @@ public class SimpleArticleServiceTest {
   @Test
   public void testFeaturedArticlesAreReturnedCorrectly() {
 
-    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(null, null).block();
+    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(null, null);
 
     assertNotNull(allArticles.getFeatured());
     assertEquals(1, allArticles.getFeatured().size());
@@ -66,7 +66,7 @@ public class SimpleArticleServiceTest {
   @Test
   public void testOwnArticlesAreReturnedCorrectly() {
     Principal p = new PrincipalImpl("USER");
-    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, null).block();
+    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, null);
     assertNotNull(allArticles.getOwn());
     assertEquals(1, allArticles.getOwn().size());
     assertTrue(allArticles.getOwn().stream().anyMatch(articleDTO -> articleDTO.getId() == 3l));
@@ -74,7 +74,7 @@ public class SimpleArticleServiceTest {
 
   @Test
   public void testUnpublishedArticlesAreNotReturnedWhenNoUserIsLoggedIn() {
-    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(null, null).block();
+    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(null, null);
 
     assertNotNull(allArticles.getUnpublished());
     assertTrue(allArticles.getOwn().isEmpty());
@@ -84,7 +84,7 @@ public class SimpleArticleServiceTest {
   public void testUnpublishedArticlesOfOthersAreNotReturnedWhenUserIsLoggedInButIsRegularUser() {
     Principal p = new PrincipalImpl("TEST");
 
-    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, null).block();
+    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, null);
 
     assertNotNull(allArticles.getUnpublished());
     assertTrue(allArticles.getUnpublished().isEmpty());
@@ -95,7 +95,7 @@ public class SimpleArticleServiceTest {
     Principal p = new PrincipalImpl("USER");
     Authentication authentication = new TestAuthentication(true, "user", "test");
 
-    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, authentication).block();
+    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, authentication);
 
     assertNotNull(allArticles.getUnpublished());
     assertFalse(allArticles.getUnpublished().isEmpty());
@@ -108,7 +108,7 @@ public class SimpleArticleServiceTest {
     Principal p = new PrincipalImpl("TEST");
     Authentication authentication = new TestAuthentication(true, "admin", "test");
 
-    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, authentication).block();
+    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, authentication);
 
     assertNotNull(allArticles.getUnpublished());
     assertFalse(allArticles.getUnpublished().isEmpty());

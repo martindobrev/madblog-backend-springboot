@@ -30,8 +30,9 @@ public class DBFileService implements FileService {
     return fileRepository.findById(id).get();
   }
 
-  @Override public List<BlogFile> getFiles(String name) {
-    return null;
+  @Override
+  public Iterable<BlogFile> getFiles(String name) {
+    return fileRepository.findAll();
   }
 
   @Override
