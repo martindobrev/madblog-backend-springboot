@@ -3,7 +3,7 @@ package com.noser.blog.api;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.Set;
+import java.util.List;
 
 @Value
 @Builder
@@ -12,5 +12,5 @@ public class UserDTO {
   private String username;
   private String firstname;
   private String lastname;
-  private Set<String> roles;
+  private List<String> roles;
 }

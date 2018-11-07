@@ -85,8 +85,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
   {
     super.configure(http);
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    http.csrf().disable()
-        .authorizeRequests()
+    http.csrf().disable();
+    http.headers().frameOptions().disable();    // must be disabled for H2 console
+    http.authorizeRequests()
         .antMatchers(HttpMethod.POST,   "/api/v1/files").permitAll()
         .antMatchers(HttpMethod.GET,    "/api/v1/articles").permitAll()
         .antMatchers(HttpMethod.POST,   "/api/v1/articles").hasAnyAuthority("user", "admin")

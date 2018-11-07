@@ -1,0 +1,26 @@
+Riding a bike is coooooool!
+Whether commuting to work or just cruising through the city - riding a bike is always fun!
+city-bike.jpg
+TIM
+true
+false
+yyyy-MM-dd HH:mm|2018-03-07 14:30
+### We always ride a bike!
+
+It's raining - no problem! It's snowing - no problem :) Riding is always fun
+
+![winter bike lane](/api/v1/files/15?size=800)
+
+Do you want to be the guy that is:
+- Smiling in the office
+- Having fun on the way to work
+- Reduce body fat while commuting
+
+
+Here are some useful tips and tricks...
+
+![dirty chain image](/api/v1/files/9?size=800)
+
+
+> RIDE FOR LIFE
+

@@ -1,3 +1,10 @@
+Sometimes you just need to grab a beer!
+Having a day when nothing really works as expected? Everything you do just does not work out? Relax and just dring a beer :)
+beer.jpg
+DANIEL
+true
+false
+yyyy-MM-dd HH:mm|2018-08-12 19:30
 Each line of code you write is throwing some unexpected exceptions? Even the auto-complete of your IDE cannot save you
 from typos?
 

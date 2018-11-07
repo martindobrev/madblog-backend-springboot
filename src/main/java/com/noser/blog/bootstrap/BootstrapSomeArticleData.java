@@ -4,6 +4,7 @@ import com.noser.blog.domain.Article;
 import com.noser.blog.domain.BlogFile;
 import com.noser.blog.repository.ArticleRepository;
 import com.noser.blog.repository.FileRepository;
+import com.sun.org.apache.xml.internal.serialize.LineSeparator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,13 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -27,6 +31,9 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
   private final FileRepository fileRepository;
 
   private static final String TIM_USER_ID = "5b8cc585-6e80-4ebf-834f-73f88572ab5f";
+  private static final String DANIEL_USER_ID = "94d26a9d-2b9f-43d0-b512-08955ee9a096";
+
+  private Map<String, Long> imageFileIds = new HashMap<>();
 
   @Autowired
   public BootstrapSomeArticleData(final ArticleRepository articleReactiveRepository, final FileRepository fileRepository) {
@@ -36,77 +43,81 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-    createSomeData();
+    addImages();
+    addArticles();
     log.info("Article count is: " + articleRepository.count());
   }
 
-  private void createSomeData() {
-
-
-    String[] filenames = new String[] {
-        "beer.jpg",
-        "team_building.jpg"
-    };
-
-
-    for (String filename : filenames) {
-      File file = new File(this.getClass().getClassLoader().getResource("images/" + filename).getFile());
-      try {
-        byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
-
-        fileRepository.save(BlogFile.builder()
-            .fileType("image/jpeg")
-            .name(filename)
-            .authorId(TIM_USER_ID)
-            .size(bytes.length)
-            .data(bytes)
-            .uploaded(LocalDateTime.now())
-            .build());
-
-      } catch (IOException e) {
-        e.printStackTrace();
+  private void addImages() {
+    File imageDir = new File(this.getClass().getClassLoader().getResource("images").getFile());
+    if (imageDir.isDirectory()) {
+      for (File image : imageDir.listFiles()) {
+        try {
+          byte[] bytes = IOUtils.toByteArray(new FileInputStream(image));
+          BlogFile blogFile = fileRepository.save(BlogFile.builder()
+              .fileType("image/jpeg")
+              .name(image.getName())
+              .authorId(TIM_USER_ID)
+              .size(bytes.length)
+              .data(bytes)
+              .uploaded(LocalDateTime.now())
+              .build());
+          imageFileIds.put(blogFile.getName(), blogFile.getId());
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
       }
     }
+  }
 
-    try {
-      String perfectTeamBuildingContent = IOUtils.toString(this.getClass().getClassLoader().getResource("articles/team_building.txt"));
 
-      articleRepository.save(
-          Article.builder()
-              .title("The perfect team building event")
-              .subtitle("What does it take to make the perfect event for your employees? Here are some ideas...")
-              .content(perfectTeamBuildingContent)
-              .authorId(TIM_USER_ID)
-              .imageId(2l)
-              .published(true)
-              .created(LocalDateTime.of(2018, 03, 3, 17, 37, 00))
-              .featured(false)
-              .build()
-      );
 
-    } catch (IOException e) {
-      e.printStackTrace();
+  private void addArticles() {
+    File articlesDir = new File(this.getClass().getClassLoader().getResource("articles").getFile());
+    if (articlesDir.isDirectory()) {
+      for (File article : articlesDir.listFiles()) {
+        try {
+          createArticleFromFile(article);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+
+  private void createArticleFromFile(File article) throws IOException {
+
+    List<String> lines = IOUtils.readLines(new FileInputStream(article));
+
+    final String title = lines.remove(0);
+    final String subtitle = lines.remove(0);
+    final Long imageId = imageFileIds.get(lines.remove(0));
+    final String userIdLine = lines.remove(0);
+    final boolean published = Boolean.parseBoolean(lines.remove(0));
+    final boolean featured = Boolean.parseBoolean(lines.remove(0));
+    final String createdFormatAndDate = lines.remove(0);
+    final String[] localDateTimeParts = createdFormatAndDate.split("\\|");
+    final LocalDateTime created = LocalDateTime.parse(localDateTimeParts[1], DateTimeFormatter.ofPattern(localDateTimeParts[0]));
+    final String content = lines.stream().reduce((s, s2) -> s + String.format("%n") + s2).get();
+
+    String userId;
+    if ("TIM".equals(userIdLine)) {
+      userId = TIM_USER_ID;
+    } else {
+      userId = DANIEL_USER_ID;
     }
 
-
-    try {
-      String grabABeerContent = IOUtils.toString(this.getClass().getClassLoader().getResource("articles/grab_a_beer.txt"));
-
-      articleRepository.save(
-          Article.builder()
-              .title("Just grab a beer")
-              .subtitle("Your new methods just throw some unexpected exceptions? You introduce typos although your IDE has autocompletion?")
-              .content(grabABeerContent)
-              .authorId(TIM_USER_ID)
-              .imageId(1l)
-              .published(true)
-              .created(LocalDateTime.of(2018, 06, 21, 17, 37, 00))
-              .featured(true)
-              .build()
-      );
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    articleRepository.save(
+      Article.builder()
+          .title(title)
+          .subtitle(subtitle)
+          .content(content)
+          .authorId(userId)
+          .published(published)
+          .featured(featured)
+          .created(created)
+          .imageId(imageId)
+          .build()
+    );
   }
 }

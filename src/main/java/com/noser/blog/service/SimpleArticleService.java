@@ -7,9 +7,7 @@ import com.noser.blog.mapper.ArticleMapper;
 import com.noser.blog.repository.ArticleRepository;
 import com.noser.blog.security.AccessRights;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -32,7 +30,7 @@ public class SimpleArticleService implements ArticleService {
   @Override
   public ArticleCollectionDTO getAllArticles(final Principal principal, Authentication authentication) {
 
-    Iterable<Article> allArticles = articleRepository.findAll();
+    Iterable<Article> allArticles = articleRepository.findAllByOrderByCreatedDesc();
 
     return ArticleCollectionDTO.builder()
         .published(StreamSupport.stream(allArticles.spliterator(), false)
