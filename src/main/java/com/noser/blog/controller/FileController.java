@@ -85,6 +85,11 @@ public class FileController {
     return blogFileCollectionDTO;
   }
 
+  @DeleteMapping(value = "/files/{id}")
+  public boolean deleteFile(@PathVariable Long id) {
+    return this.fileService.deleteFile(id);
+  }
+
   private byte[] createThumbnail(final BlogFile file, int size) throws IOException {
     InputStream imageIn = new ByteArrayInputStream(file.getData());
     BufferedImage bufferedImage = Thumbnails.of(imageIn).size(size, size).asBufferedImage();

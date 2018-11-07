@@ -88,7 +88,10 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     http.csrf().disable();
     http.headers().frameOptions().disable();    // must be disabled for H2 console
     http.authorizeRequests()
-        .antMatchers(HttpMethod.POST,   "/api/v1/files").permitAll()
+        .antMatchers(HttpMethod.GET, "/api/v1/files").permitAll()
+        .antMatchers(HttpMethod.POST,   "/api/v1/files").hasAnyAuthority("user", "admin", "publisher")
+        .antMatchers(HttpMethod.DELETE,   "/api/v1/files/*").hasAnyAuthority("user", "admin", "publisher")
+        .antMatchers(HttpMethod.GET, "/api/v1/files/*").permitAll()
         .antMatchers(HttpMethod.GET,    "/api/v1/articles").permitAll()
         .antMatchers(HttpMethod.POST,   "/api/v1/articles").hasAnyAuthority("user", "admin")
         .antMatchers(HttpMethod.GET,    "/api/v1/articles/*").permitAll()
