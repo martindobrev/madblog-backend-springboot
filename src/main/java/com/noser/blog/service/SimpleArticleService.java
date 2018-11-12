@@ -9,6 +9,7 @@ import com.noser.blog.security.AccessRights;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Access;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -74,7 +75,8 @@ public class SimpleArticleService implements ArticleService {
     Optional<Article> articleOptional = articleRepository.findById(id);
     if (articleOptional.isPresent()) {
       final Article article = articleOptional.get();
-      if (article.isPublished() || AccessRights.isOwnArticle(article, principal) || AccessRights.canUserEditArticle(authentication)) {
+
+      if (AccessRights.canUserViewArticle(article, principal, authentication)) {
         return articleMapper.domain2dto(article, principal, authentication);
       }
     }
@@ -108,5 +110,25 @@ public class SimpleArticleService implements ArticleService {
     }
     this.articleRepository.save(existingArticle);
     return articleDTO;
+  }
+
+  @Override
+  public boolean allowedToEditArticle(Long id, Principal principal, Authentication authentication) {
+    Optional<Article> articleOptional = this.articleRepository.findById(id);
+
+    if (!articleOptional.isPresent()) {
+      return false;
+    }
+
+    return AccessRights.canUserEditArticle(articleOptional.get(), principal, authentication);
+  }
+
+  @Override
+  public boolean allowedToViewArticle(Long id, Principal principal, Authentication authentication) {
+    Optional<Article> articleOptional = this.articleRepository.findById(id);
+    if (articleOptional.isPresent()) {
+      return AccessRights.canUserViewArticle(articleOptional.get(), principal, authentication);
+    }
+    return false;
   }
 }

@@ -2,6 +2,7 @@ package com.noser.blog.mapper;
 
 import com.noser.blog.api.ArticleDTO;
 import com.noser.blog.domain.Article;
+import com.noser.blog.security.AccessRights;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.options.MutableDataSet;
@@ -9,9 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
-
-import static com.noser.blog.security.AccessRights.canUserEditArticle;
-import static com.noser.blog.security.AccessRights.isOwnArticle;
 
 @Component
 public class SimpleArticleMapper implements ArticleMapper {
@@ -42,7 +40,7 @@ public class SimpleArticleMapper implements ArticleMapper {
         .published(article.isPublished())
         .featured(article.isFeatured())
         .imageId(article.getImageId())
-        .editable(isOwnArticle(article, principal) || canUserEditArticle(authentication))
+        .editable(AccessRights.canUserEditArticle(article, principal, authentication))
         .build();
   }
 

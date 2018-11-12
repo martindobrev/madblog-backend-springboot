@@ -4,7 +4,6 @@ import com.noser.blog.domain.Article;
 import com.noser.blog.domain.BlogFile;
 import com.noser.blog.repository.ArticleRepository;
 import com.noser.blog.repository.FileRepository;
-import com.sun.org.apache.xml.internal.serialize.LineSeparator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

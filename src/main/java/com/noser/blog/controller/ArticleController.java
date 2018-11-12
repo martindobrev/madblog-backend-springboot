@@ -2,20 +2,12 @@ package com.noser.blog.controller;
 
 import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.api.ArticleDTO;
-import com.noser.blog.api.BlogFileDTO;
 import com.noser.blog.domain.Article;
-import com.noser.blog.domain.BlogFile;
 import com.noser.blog.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.http.codec.multipart.Part;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.validation.Valid;
@@ -59,6 +51,16 @@ public class ArticleController {
   @GetMapping("/user")
   public Principal getPrincipal(Principal principal) {
     return principal;
+  }
+
+  @GetMapping("/auth/view/articles/{articleId}")
+  public boolean canViewArticle(@PathVariable Long articleId, Principal principal, Authentication authentication) {
+    return this.articleService.allowedToViewArticle(articleId, principal, authentication);
+  }
+
+  @GetMapping("/auth/edit/articles/{articleId}")
+  public boolean canEditArticle(@PathVariable Long articleId, Principal principal, Authentication authentication) {
+    return this.articleService.allowedToEditArticle(articleId, principal, authentication);
   }
 
 }
