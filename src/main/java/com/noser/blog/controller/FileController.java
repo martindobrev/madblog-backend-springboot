@@ -5,12 +5,12 @@ import com.noser.blog.api.BlogFileDTO;
 import com.noser.blog.domain.BlogFile;
 import com.noser.blog.mapper.FileMapper;
 import com.noser.blog.service.FileService;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnailator;
 import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.makers.ThumbnailMaker;
-import net.coobird.thumbnailator.util.ThumbnailatorUtils;
 import org.apache.http.entity.ContentType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,7 +37,7 @@ public class FileController {
 
   private final FileService fileService;
   private final FileMapper fileMapper;
-
+  
   public FileController(FileService fileService, FileMapper fileMapper) {
     this.fileService = fileService;
     this.fileMapper = fileMapper;

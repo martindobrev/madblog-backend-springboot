@@ -14,4 +14,5 @@ public interface ArticleService {
   ArticleDTO editArticle(Article article, Principal principal, Authentication authentication) throws IllegalAccessException;
   boolean allowedToEditArticle(Long id, Principal principal, Authentication authentication);
   boolean allowedToViewArticle(Long id, Principal principal, Authentication authentication);
+  boolean allowedToManageFiles(Principal principal, Authentication authentication);
 }

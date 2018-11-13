@@ -2,8 +2,6 @@ package com.noser.blog.service;
 
 import com.noser.blog.domain.BlogFile;
 
-import java.util.List;
-
 public interface FileService {
 
   Long saveFile(final BlogFile file);
