@@ -18,5 +18,7 @@ public class ArticleDTO {
   private boolean published;
   private boolean featured;
   private boolean editable;
+  private boolean publishable;
   private LocalDateTime created;
+  private UserDTO user;
 }

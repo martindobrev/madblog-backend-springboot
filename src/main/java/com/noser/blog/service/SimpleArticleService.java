@@ -2,20 +2,24 @@ package com.noser.blog.service;
 
 import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.api.ArticleDTO;
-import com.noser.blog.audit.CheckViewArticlePermission;
-import com.noser.blog.audit.EnableLogging;
 import com.noser.blog.domain.Article;
 import com.noser.blog.mapper.ArticleMapper;
 import com.noser.blog.repository.ArticleRepository;
-import com.noser.blog.security.AccessRights;
+import com.noser.blog.security.annotations.CheckEditArticle;
+import com.noser.blog.security.annotations.CheckManageArticles;
+import com.noser.blog.security.annotations.CheckViewArticlePermission;
+
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class SimpleArticleService implements ArticleService {
@@ -30,76 +34,58 @@ public class SimpleArticleService implements ArticleService {
 	}
 
 	@Override
-	public ArticleCollectionDTO getAllArticles(final Principal principal, Authentication authentication) {
+	@CheckManageArticles
+	public ArticleCollectionDTO getAllArticles(boolean loadUserInfo) {
 
 		Iterable<Article> allArticles = articleRepository.findAllByOrderByCreatedDesc();
+		
+		List<ArticleDTO> articleDTOs = new ArrayList<>();
+		Iterator<Article> it = allArticles.iterator();
 
+		while (it.hasNext()) {
+			ArticleDTO articleDTO = this.articleMapper.domain2dto(it.next(), loadUserInfo);
+			if (articleDTO != null) {
+				articleDTOs.add(articleDTO);
+			}
+		}
+		
 		return ArticleCollectionDTO.builder()
-			.published(
-					StreamSupport.stream(allArticles.spliterator(), false).filter(article -> article.isPublished())
-							.map(article -> articleMapper.domain2dto(article, principal, authentication))
-							.collect(Collectors.toList()))
-			.featured(StreamSupport.stream(allArticles.spliterator(), false).filter(article -> article.isFeatured())
-					.map(article -> articleMapper.domain2dto(article, principal, authentication))
-					.collect(Collectors.toList()))
-			.own(StreamSupport.stream(allArticles.spliterator(), false)
-					.filter(article -> article != null && principal != null
-							&& article.getAuthorId().equals(principal.getName()))
-					.map(article -> articleMapper.domain2dto(article, principal, authentication))
-					.collect(Collectors.toList()))
-			.unpublished(StreamSupport.stream(allArticles.spliterator(), false).filter(article -> {
-				if (article.isPublished()) {
-					return false;
-				}
-
-				if (principal == null || authentication == null) {
-					return false;
-				}
-
-				if (principal.getName().equals(article.getAuthorId())) {
-					return true;
-				}
-
-				if (authentication.getAuthorities().stream()
-						.anyMatch(authority -> "publisher".equals(authority.getAuthority())
-								|| "admin".equals(authority.getAuthority()))) {
-					return true;
-				}
-
-				return false;
-			}).map(article -> articleMapper.domain2dto(article, principal, authentication))
-					.collect(Collectors.toList()))
+			.articles(articleDTOs)
 			.build();
 	}
+	
 
 	@Override
 	@CheckViewArticlePermission
-	public ArticleDTO getArticle(Long id, Principal principal, Authentication authentication) {
+	public ArticleDTO getArticle(Long id) {
+		
 		Optional<Article> articleOptional = articleRepository.findById(id);
 		if (articleOptional.isPresent()) {
-			final Article article = articleOptional.get();
-
-			if (AccessRights.canUserViewArticle(article, principal, authentication)) {
-				return articleMapper.domain2dto(article, principal, authentication);
-			}
+			final Article article = articleOptional.get();	
+			return articleMapper.domain2dto(article, true);
+			
 		}
 		return null;
 	}
 
 	@Override
-	public ArticleDTO createArticle(Article article, Principal principal, Authentication authentication) {
+	public ArticleDTO createArticle(Article article) {
+		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Principal principal = null;
+		try {
+			principal = (Principal) authentication.getPrincipal();
+		} catch (ClassCastException exception) {
+			
+		}
 		article.setAuthorId(principal.getName());
 		article.setCreated(LocalDateTime.now());
-		return articleMapper.domain2dto(articleRepository.save(article), principal, authentication);
+		return articleMapper.domain2dto(articleRepository.save(article), true);
 	}
 
 	@Override
-	public ArticleDTO editArticle(Article article, Principal principal, Authentication authentication)
-			throws IllegalAccessException {
+	@CheckEditArticle
+	public ArticleDTO editArticle(Article article) {
 		final Optional<Article> existingArticleOptional = articleRepository.findById(article.getId());
-		if (existingArticleOptional.get() == null) {
-			throw new IllegalAccessException("Unknown article");
-		}
 
 		final Article existingArticle = existingArticleOptional.get();
 		existingArticle.setContent(article.getContent());
@@ -108,41 +94,31 @@ public class SimpleArticleService implements ArticleService {
 		existingArticle.setPublished(article.isPublished());
 		existingArticle.setFeatured(article.isFeatured());
 		existingArticle.setImageId(article.getImageId());
-		ArticleDTO articleDTO = articleMapper.domain2dto(existingArticle, principal, authentication);
-		if (false == articleDTO.isEditable()) {
-			throw new IllegalAccessException("Unauthorized access");
-		}
+		ArticleDTO articleDTO = articleMapper.domain2dto(existingArticle, true);
 		this.articleRepository.save(existingArticle);
 		return articleDTO;
 	}
 
 	@Override
-	public boolean allowedToEditArticle(Long id, Principal principal, Authentication authentication) {
-		Optional<Article> articleOptional = this.articleRepository.findById(id);
-
-		if (!articleOptional.isPresent()) {
-			return false;
-		}
-
-		return AccessRights.canUserEditArticle(articleOptional.get(), principal, authentication);
+	public List<ArticleDTO> getUserArticles(String userId) {
+		List<Article> articles = this.articleRepository.findByAuthorId(userId);
+		return articles.stream().map(article -> this.articleMapper.domain2dto(article, false)).collect(Collectors.toList());
 	}
 
 	@Override
-	@EnableLogging
-	public boolean allowedToViewArticle(Long id, Principal principal, Authentication authentication) {
-		Optional<Article> articleOptional = this.articleRepository.findById(id);
+	public ArticleDTO changePublishedStatus(Article article, boolean status) {
+		Optional<Article> articleOptional = this.articleRepository.findById(article.getId());
 		if (articleOptional.isPresent()) {
-			return AccessRights.canUserViewArticle(articleOptional.get(), principal, authentication);
+			final Article toBeChangedArticle = articleOptional.get();
+			toBeChangedArticle.setPublished(status);
+			return this.articleMapper.domain2dto(this.articleRepository.save(toBeChangedArticle), true);
 		}
-		return false;
+		return null;
 	}
 
 	@Override
-	public boolean allowedToManageFiles(Principal principal, Authentication authentication) {
-		if (principal == null || authentication == null) {
-			return false;
-		}
-
-		return authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("user"));
+	public ArticleDTO changeFeaturedStatus(Article article, boolean status) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

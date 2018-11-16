@@ -6,61 +6,51 @@ import com.noser.blog.domain.Article;
 import com.noser.blog.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 
 import javax.validation.Valid;
 
 import java.security.Principal;
+import java.util.Optional;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/")
 public class ArticleController {
 
-  private final ArticleService articleService;
+	private final ArticleService articleService;
 
-  @Autowired
-  public ArticleController(ArticleService articleService) {
-    this.articleService = articleService;
-  }
+	@Autowired
+	public ArticleController(ArticleService articleService) {
+		this.articleService = articleService;
+	}
 
-  @GetMapping("/articles")
-  public ArticleCollectionDTO getAllArticles(Principal principal, Authentication authentication) {
-    log.info("Principal is: {}", principal);
-    log.info("Authentication is: {}", authentication);
-    return this.articleService.getAllArticles(principal, authentication);
-  }
+	@GetMapping("/articles")
+	public ArticleCollectionDTO getAllArticles(@RequestParam Optional<String> loadUserInfo) {
+		return this.articleService.getAllArticles(false);
+	}
 
-  @GetMapping("/articles/{articleId}")
-  public ArticleDTO getArticle(@PathVariable Long articleId, Principal principal, Authentication authentication) {
-    return this.articleService.getArticle(articleId, principal, authentication);
-  }
+	@GetMapping("/complete-articles")
+	public ArticleCollectionDTO getCompleteVisibleArticles() {
+		return this.articleService.getAllArticles(true);
+	}
 
-  @PostMapping("/articles")
-  public ArticleDTO createArticle(@Valid @RequestBody Article article, Principal principal, Authentication authentication) {
-    return this.articleService.createArticle(article, principal, authentication);
-  }
+	@GetMapping("/articles/{articleId}")
+	public ArticleDTO getArticle(@PathVariable Long articleId) {
+		return this.articleService.getArticle(articleId);
+	}
 
-  @PutMapping("/articles/{articleId}")
-  public ArticleDTO editArticle(@PathVariable Long articleId, @RequestBody Article article, Principal principal, Authentication authentication) throws Exception {
-    return this.articleService.editArticle(article, principal, authentication);
-  }
+	@PostMapping("/articles")
+	public ArticleDTO createArticle(@Valid @RequestBody Article article) {
+		return this.articleService.createArticle(article);
+	}
 
-  @GetMapping("/user")
-  public Principal getPrincipal(Principal principal) {
-    return principal;
-  }
+	@PutMapping("/articles/{articleId}")
+	public ArticleDTO editArticle(@PathVariable Long articleId, @RequestBody Article article) throws Exception {
+		return this.articleService.editArticle(article);
+	}
 
-  @GetMapping("/auth/view/articles/{articleId}")
-  public boolean canViewArticle(@PathVariable Long articleId, Principal principal, Authentication authentication) {
-    return this.articleService.allowedToViewArticle(articleId, principal, authentication);
-  }
-
-  @GetMapping("/auth/edit/articles/{articleId}")
-  public boolean canEditArticle(@PathVariable Long articleId, Principal principal, Authentication authentication) {
-    return this.articleService.allowedToEditArticle(articleId, principal, authentication);
-  }
-
+	@GetMapping("/user")
+	public Principal getPrincipal(Principal principal) {
+		return principal;
+	}
 }

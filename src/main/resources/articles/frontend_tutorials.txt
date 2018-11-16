@@ -1,0 +1,26 @@
+Frontend development tutorial (Angular)
+Here you will find detailed information about the frontend development topics covered in this tutorial
+frontend.jpg
+TIM
+true
+true
+yyyy-MM-dd HH:mm|2018-11-01 14:30
+### Following topics will be covered in details
+- **Authentication (via Keycloak)**
+    - how to login and logout
+    - retrieve and check user details, roles and groups
+- **Angular routing**
+    - routing with child routes
+    - resolve data before component is loaded
+    - secure route access (by [route guards](https://angular.io/guide/router#milestone-5-route-guards))
+- **Abstracting services**
+    - create a common interface for each service (abstract class)
+    - mocking services for testing
+    - mocking services for demonstration purposes
+- **File upload**
+    - detailed control of the file upload process with progress checking and cancelling
+    - selecting files and drag-and-drop upload
+    - single, or multiple simultaneous uploads
+- **Dynamical component loading** 
+    - basic concept  
+    - loading file manager dynamically for selecting images

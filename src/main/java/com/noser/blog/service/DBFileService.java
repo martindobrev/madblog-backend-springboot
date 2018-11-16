@@ -1,8 +1,8 @@
 package com.noser.blog.service;
 
-import com.noser.blog.audit.CheckGetAllFilesPermission;
 import com.noser.blog.domain.BlogFile;
 import com.noser.blog.repository.FileRepository;
+import com.noser.blog.security.annotations.CheckGetAllFilesPermission;
 
 import lombok.Getter;
 

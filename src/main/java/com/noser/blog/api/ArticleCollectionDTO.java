@@ -8,8 +8,5 @@ import java.util.List;
 @Value
 @Builder
 public class ArticleCollectionDTO {
-  private List<ArticleDTO> published;
-  private List<ArticleDTO> unpublished;
-  private List<ArticleDTO> featured;
-  private List<ArticleDTO> own;
+  private List<ArticleDTO> articles;
 }

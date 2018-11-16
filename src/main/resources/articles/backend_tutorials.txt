@@ -1,0 +1,17 @@
+Backend development tutorials (Spring Boot 2)
+Here you will find detailed information about the backend development topics covered in this tutorial
+backend.jpg
+TIM
+true
+true
+yyyy-MM-dd HH:mm|2018-11-01 17:17
+### This tutorial series will show you how to:
+- **Create a REST API with spring boot 2**
+- **Secure the REST API with Keycloak**
+- **Use JPA with H2 for data storage**
+- **Configure Spring Security to work with Keycloak**
+- **Retrieve user details from Keycloak with the help of Keycloak-adapter-client**
+- **Bootstrap some test data at startup**
+- **Test the REST API**
+- **Use AspectJ for decoupling security from the application logic**
+- **Configure and enable caching to speedup the API**
