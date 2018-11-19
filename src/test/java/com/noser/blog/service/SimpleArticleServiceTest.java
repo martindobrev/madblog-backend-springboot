@@ -1,52 +1,99 @@
 package com.noser.blog.service;
 
+import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.domain.Article;
 import com.noser.blog.mapper.ArticleMapper;
 import com.noser.blog.mapper.SimpleArticleMapper;
+import com.noser.blog.mock.AnonymousAuthentication;
+import com.noser.blog.mock.UserWithRolesAuthentication;
 import com.noser.blog.repository.ArticleRepository;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 public class SimpleArticleServiceTest {
+	
+	private final static String TEST_USER_ID_1 = "TEST_USER_1";
+	private final static String TEST_USER_ID_2 = "TEST_USER_2";
 
-  private ArticleMapper articleMapper; 
-  private ArticleService articleService;
+	private ArticleMapper articleMapper;
+	private ArticleService articleService;
 
-  @Mock
-  private ArticleRepository articleRepository;
-  
-  @Mock
-  private KeycloakService keycloakServiceMock;
+	@Mock
+	private ArticleRepository articleRepository;
 
+	@Mock
+	private KeycloakService keycloakServiceMock;
 
-  @Before
-  public void setup() {
-    MockitoAnnotations.initMocks(this);
+	@Mock
+	private SecurityContext mockSecurityContext;
 
-    when(articleRepository.findAll()).thenReturn(getTestArticles());
-    when(keycloakServiceMock.getUserInfo(ArgumentMatchers.anyString())).thenReturn(null);
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
 
-    this.articleService = new SimpleArticleService(articleRepository, articleMapper);
-    this.articleMapper = new SimpleArticleMapper(keycloakServiceMock);
-  }
+		SecurityContextHolder.setContext(mockSecurityContext);
 
+		when(articleRepository.findAll()).thenReturn(getTestArticles());
+		when(articleRepository.findAllByOrderByCreatedDesc()).thenReturn(getTestArticles());
+		when(keycloakServiceMock.getUserInfo(ArgumentMatchers.anyString())).thenReturn(null);
 
-//  @Test
-//  public void testPublishedArticlesAreReturnedCorrectly() {
-//
-//    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(null, null);
-//
-//    assertNotNull(allArticles.getArticles());
-//    assertEquals(3, allArticles.getArticles().size());
-//    assertEquals(false, allArticles.getPublished().stream().anyMatch(articleDTO -> articleDTO.getId() == 3l));
-//  }
+		this.articleMapper = new SimpleArticleMapper(keycloakServiceMock);
+		this.articleService = new SimpleArticleService(articleRepository, articleMapper);
+	}
+
+	@Test
+	public void testPublishedArticlesAreReturnedCorrectlyForAnonymousUsers() {
+		when(mockSecurityContext.getAuthentication()).thenReturn(new AnonymousAuthentication());
+		
+		ArticleCollectionDTO allArticles = this.articleService.getAllArticles(false);
+
+		assertNotNull(allArticles.getArticles());
+		assertEquals(3, allArticles.getArticles().size());
+		assertEquals(false, allArticles.getArticles().stream().anyMatch(articleDTO -> articleDTO.getId() == 3l));
+	}
+	
+	@Test
+	public void testUnpublishedArticlesAreVisibleForTheCreatedUser() {
+		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication(TEST_USER_ID_2, "user"));
+		
+		ArticleCollectionDTO allArticles = this.articleService.getAllArticles(false);
+		
+		assertEquals(4, allArticles.getArticles().size());
+	}
+	
+	@Test
+	public void testUnpublishedArticlesOfOtherUsersAreNotVisibleToDifferentUser() {
+		
+		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication("USER_WITHOUT_ARTICLES", "user"));
+		
+		ArticleCollectionDTO allArticles = this.articleService.getAllArticles(false);
+		
+		assertEquals(3, allArticles.getArticles().size());
+		assertFalse(allArticles.getArticles().stream().anyMatch(article -> article.getId() == 3l));
+	}
+	
+	@Test
+	public void testEditingOwnArticleIsAllowed() {
+		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication(TEST_USER_ID_2, "user"));
+		
+		
+		//final dummyArticle 
+		//this.articleService.editArticle(article)
+	}
 //
 //  @Test
 //  public void testFeaturedArticlesAreReturnedCorrectly() {
@@ -114,19 +161,32 @@ public class SimpleArticleServiceTest {
 //    assertEquals("Article 3", allArticles.getUnpublished().get(0).getTitle());
 //  }
 
+	private List<Article> getTestArticles() {
+		List<Article> articles = new ArrayList<>();
 
-  private Iterable<Article> getTestArticles() {
-    List<Article> articles = new ArrayList<>();
+		LocalDateTime firstArticleTime = LocalDateTime.of(2018, 1, 1, 10, 0);
 
-    LocalDateTime firstArticleTime = LocalDateTime.of(2018, 1, 1, 10, 0);
+		
+		articles.add(Article.builder().id(1l)
+				.title("Article 1").subtitle("Article 1 Subtitle").content("Article 1 Content")
+				.authorId(TEST_USER_ID_1).published(true).featured(false)
+				.created(firstArticleTime).build());
+		articles.add(Article.builder().id(2l)
+				.title("Article 2").subtitle("Article 2 Subtitle").content("Article 2 Content")
+				.authorId(TEST_USER_ID_1).published(true).featured(false)
+				.created(firstArticleTime.plusDays(2)).build());
+		articles.add(Article.builder().id(3l)
+				.title("Article 3").subtitle("Article 3 Subtitle").content("Article 3 Content")
+				.authorId(TEST_USER_ID_2).published(false).featured(false)
+				.created(firstArticleTime.plusDays(4)).build());
+		articles.add(Article.builder().id(4l)
+				.title("Article 4").subtitle("Article 4 Subtitle").content("Article 4 Content")
+				.authorId(TEST_USER_ID_1).published(true).featured(true)
+				.created(firstArticleTime.plusDays(10)).build());
+		// articles.add(ArticleDTO.builder().id(5l).title("Article
+		// 2").authorId("TEST").published(true).featured(false).created(firstArticleTime.plusDays(2)).build());
 
-    articles.add(Article.builder().id(1l).title("Article 1").authorId("TEST").published(true).featured(false).created(firstArticleTime).build());
-    articles.add(Article.builder().id(2l).title("Article 2").authorId("TEST").published(true).featured(false).created(firstArticleTime.plusDays(2)).build());
-    articles.add(Article.builder().id(3l).title("Article 3").authorId("USER").published(false).featured(false).created(firstArticleTime.plusDays(4)).build());
-    articles.add(Article.builder().id(4l).title("Article 4").authorId("TEST").published(true).featured(true).created(firstArticleTime.plusDays(10)).build());
-    //articles.add(ArticleDTO.builder().id(5l).title("Article 2").authorId("TEST").published(true).featured(false).created(firstArticleTime.plusDays(2)).build());
-
-    return articles;
-  }
+		return articles;
+	}
 
 }
