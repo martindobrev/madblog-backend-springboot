@@ -7,52 +7,64 @@ import com.noser.blog.mapper.SimpleArticleMapper;
 import com.noser.blog.mock.AnonymousAuthentication;
 import com.noser.blog.mock.UserWithRolesAuthentication;
 import com.noser.blog.repository.ArticleRepository;
+import com.noser.blog.security.SecurityAspect;
+import com.noser.blog.security.UnauthorizedException;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
-public class SimpleArticleServiceTest {
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class SimpleArticleServiceIT {
 	
 	private final static String TEST_USER_ID_1 = "TEST_USER_1";
 	private final static String TEST_USER_ID_2 = "TEST_USER_2";
 
 	private ArticleMapper articleMapper;
+	
+	private ArticleCollectionDTO articleCollectionDTO;
+	
+	@Autowired
 	private ArticleService articleService;
 
-	@Mock
-	private ArticleRepository articleRepository;
-
-	@Mock
-	private KeycloakService keycloakServiceMock;
-
+	
 	@Mock
 	private SecurityContext mockSecurityContext;
-
+	
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 
 		SecurityContextHolder.setContext(mockSecurityContext);
-
-		when(articleRepository.findAll()).thenReturn(getTestArticles());
-		when(articleRepository.findAllByOrderByCreatedDesc()).thenReturn(getTestArticles());
-		when(keycloakServiceMock.getUserInfo(ArgumentMatchers.anyString())).thenReturn(null);
-
-		this.articleMapper = new SimpleArticleMapper(keycloakServiceMock);
-		this.articleService = new SimpleArticleService(articleRepository, articleMapper);
+		
+		this.articleCollectionDTO = articleService.getAllArticles(false);
+//
+//		when(articleRepository.findAll()).thenReturn(getTestArticles());
+//		when(articleRepository.findAllByOrderByCreatedDesc()).thenReturn(getTestArticles());
+//		when(keycloakServiceMock.getUserInfo(ArgumentMatchers.anyString())).thenReturn(null);
+//
+//		this.articleMapper = new SimpleArticleMapper(keycloakServiceMock);
+//		//this.articleService = new SimpleArticleService(articleRepository, articleMapper);
 	}
 
 	@Test
@@ -62,7 +74,7 @@ public class SimpleArticleServiceTest {
 		ArticleCollectionDTO allArticles = this.articleService.getAllArticles(false);
 
 		assertNotNull(allArticles.getArticles());
-		assertEquals(3, allArticles.getArticles().size());
+		assertEquals(6, allArticles.getArticles().size());
 		assertEquals(false, allArticles.getArticles().stream().anyMatch(articleDTO -> articleDTO.getId() == 3l));
 	}
 	
@@ -87,13 +99,41 @@ public class SimpleArticleServiceTest {
 	}
 	
 	@Test
-	public void testEditingOwnArticleIsAllowed() {
+	public void testEditingOwnArticleIsAllowed() throws Exception {
 		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication(TEST_USER_ID_2, "user"));
+		Article toBeChangedArticle = Article.builder()
+				.id(1l)
+				.authorId(TEST_USER_ID_2)
+				.content("Some dummy content")
+				.created(LocalDateTime.now())
+				.featured(false)
+				.published(false)
+				.imageId(1l)
+				.subtitle("SUBTITLE")
+				.title("Dummy content to be changed :) ")
+				.build();
 		
 		
-		//final dummyArticle 
-		//this.articleService.editArticle(article)
+	
+		toBeChangedArticle.setContent("CHANGED CONTENT");
+		articleService.editArticle(toBeChangedArticle);
+		
+		// No exception shall be thrown
 	}
+	
+	@Test(expected = UnauthorizedException.class)
+	public void testEditingOtherArticleIsNotAllowed() throws UnauthorizedException {
+		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication(TEST_USER_ID_2, "user"));
+		//ArticleDTO toBeChangedArticle = this.articleCollectionDTO.getArticles().get(0);
+		
+		
+		
+		
+//		when(articleRepository.findById(1l)).thenReturn(Optional.of(toBeChangedArticle));
+//		toBeChangedArticle.setContent("CHANGED CONTENT");
+//		articleService.editArticle(toBeChangedArticle);
+	}
+	
 //
 //  @Test
 //  public void testFeaturedArticlesAreReturnedCorrectly() {

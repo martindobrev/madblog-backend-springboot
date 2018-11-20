@@ -1,4 +1,4 @@
-package com.noser.blog.security.annotations;
+package com.noser.blog.security;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

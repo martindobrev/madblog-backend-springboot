@@ -7,16 +7,13 @@ import java.util.Optional;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.noser.blog.domain.Article;
 import com.noser.blog.repository.ArticleRepository;
-import com.noser.blog.security.annotations.CheckViewArticlePermission;
-import com.noser.blog.security.annotations.CheckEditArticle;
-import com.noser.blog.security.annotations.CheckGetAllFilesPermission;
-import com.noser.blog.security.annotations.CheckManageArticles;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,6 +30,7 @@ public class SecurityAspect {
 
 	@Before("@annotation(checkViewArticlePermission)")
 	public void checkViewArticlePermission(final JoinPoint joinPoint, CheckViewArticlePermission checkViewArticlePermission) throws UnauthorizedException {
+		log.info("SecurityAspect.checkViewArticlePermission");
 		final Long articleId = (Long) joinPoint.getArgs()[0];
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Principal principal = null;
@@ -49,8 +47,9 @@ public class SecurityAspect {
 	}
 	
 	
-	@Before("@annotation(checkEditArticle)")
-	public void checkEditArticlePermission(final JoinPoint joinPoint, CheckEditArticle checkEditArticle) throws UnauthorizedException {
+	@Before("@annotation(CheckEditArticle)")
+	public void checkEditArticlePermission(final JoinPoint joinPoint) throws UnauthorizedException {
+		log.info("SecurityAspect.checkEditArticlePermission");
 		final Article article = (Article) joinPoint.getArgs()[0];
 		if (article == null) {
 			throw new UnauthorizedException();
@@ -72,6 +71,7 @@ public class SecurityAspect {
 	
 	@Before("@annotation(checkManageArticles)")
 	public void checkManageArticlesPermission(final JoinPoint joinPoint, CheckManageArticles checkManageArticles) throws UnauthorizedException {
+		log.info("SecurityAspect.checkManageArticlesPermission");
 		if (!((boolean) joinPoint.getArgs()[0])) {
 			return;
 		}
@@ -89,6 +89,7 @@ public class SecurityAspect {
 	
 	@Before("@annotation(checkGetAllFilesPermission)")
 	public void checkGetAllFilesPermission(final JoinPoint joinPoint, CheckGetAllFilesPermission checkGetAllFilesPermission) throws UnauthorizedException {
+		log.info("SecurityAspect.checkGetAllFilesPermission");
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Principal principal = null;
 		try {

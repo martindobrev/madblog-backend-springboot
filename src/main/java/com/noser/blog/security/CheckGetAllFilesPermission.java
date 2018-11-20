@@ -1,4 +1,4 @@
-package com.noser.blog.security.annotations;
+package com.noser.blog.security;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,4 +7,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CheckViewArticlePermission {}
+public @interface CheckGetAllFilesPermission {
+	
+}
