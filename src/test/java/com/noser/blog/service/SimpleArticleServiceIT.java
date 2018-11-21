@@ -1,52 +1,40 @@
 package com.noser.blog.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.junit4.SpringRunner;
+
 import com.noser.blog.api.ArticleCollectionDTO;
+import com.noser.blog.api.ArticleDTO;
 import com.noser.blog.domain.Article;
 import com.noser.blog.mapper.ArticleMapper;
 import com.noser.blog.mapper.SimpleArticleMapper;
 import com.noser.blog.mock.AnonymousAuthentication;
 import com.noser.blog.mock.UserWithRolesAuthentication;
-import com.noser.blog.repository.ArticleRepository;
-import com.noser.blog.security.SecurityAspect;
 import com.noser.blog.security.UnauthorizedException;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SimpleArticleServiceIT {
 	
-	private final static String TEST_USER_ID_1 = "TEST_USER_1";
-	private final static String TEST_USER_ID_2 = "TEST_USER_2";
-
-	private ArticleMapper articleMapper;
-	
-	private ArticleCollectionDTO articleCollectionDTO;
 	
 	@Autowired
 	private ArticleService articleService;
 
+	private ArticleMapper articleMapper;
 	
 	@Mock
 	private SecurityContext mockSecurityContext;
@@ -54,17 +42,8 @@ public class SimpleArticleServiceIT {
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
-
 		SecurityContextHolder.setContext(mockSecurityContext);
-		
-		this.articleCollectionDTO = articleService.getAllArticles(false);
-//
-//		when(articleRepository.findAll()).thenReturn(getTestArticles());
-//		when(articleRepository.findAllByOrderByCreatedDesc()).thenReturn(getTestArticles());
-//		when(keycloakServiceMock.getUserInfo(ArgumentMatchers.anyString())).thenReturn(null);
-//
-//		this.articleMapper = new SimpleArticleMapper(keycloakServiceMock);
-//		//this.articleService = new SimpleArticleService(articleRepository, articleMapper);
+		this.articleMapper = new SimpleArticleMapper(null);
 	}
 
 	@Test
@@ -75,16 +54,17 @@ public class SimpleArticleServiceIT {
 
 		assertNotNull(allArticles.getArticles());
 		assertEquals(6, allArticles.getArticles().size());
-		assertEquals(false, allArticles.getArticles().stream().anyMatch(articleDTO -> articleDTO.getId() == 3l));
+		assertEquals(false, allArticles.getArticles().stream().anyMatch(articleDTO -> articleDTO.getTitle().equals("UNPUBLISHED")));
 	}
 	
 	@Test
 	public void testUnpublishedArticlesAreVisibleForTheCreatedUser() {
-		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication(TEST_USER_ID_2, "user"));
+		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication("TEST_USER", "user"));
 		
 		ArticleCollectionDTO allArticles = this.articleService.getAllArticles(false);
 		
-		assertEquals(4, allArticles.getArticles().size());
+		assertEquals(7, allArticles.getArticles().size());
+		assertTrue(allArticles.getArticles().stream().anyMatch(articleDTO -> articleDTO.getTitle().equals("UNPUBLISHED")));
 	}
 	
 	@Test
@@ -94,139 +74,28 @@ public class SimpleArticleServiceIT {
 		
 		ArticleCollectionDTO allArticles = this.articleService.getAllArticles(false);
 		
-		assertEquals(3, allArticles.getArticles().size());
-		assertFalse(allArticles.getArticles().stream().anyMatch(article -> article.getId() == 3l));
+		assertEquals(6, allArticles.getArticles().size());
+		assertFalse(allArticles.getArticles().stream().anyMatch(article -> "UNPUBLISHED".equals(article.getTitle())));
 	}
 	
 	@Test
 	public void testEditingOwnArticleIsAllowed() throws Exception {
-		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication(TEST_USER_ID_2, "user"));
-		Article toBeChangedArticle = Article.builder()
-				.id(1l)
-				.authorId(TEST_USER_ID_2)
-				.content("Some dummy content")
-				.created(LocalDateTime.now())
-				.featured(false)
-				.published(false)
-				.imageId(1l)
-				.subtitle("SUBTITLE")
-				.title("Dummy content to be changed :) ")
-				.build();
-		
-		
-	
+		when(mockSecurityContext.getAuthentication()).thenReturn(new AnonymousAuthentication());
+		Article toBeChangedArticle = this.articleMapper.dto2domain(this.articleService.getAllArticles(false).getArticles().get(0));
+		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication(toBeChangedArticle.getAuthorId(), "user"));
 		toBeChangedArticle.setContent("CHANGED CONTENT");
 		articleService.editArticle(toBeChangedArticle);
-		
-		// No exception shall be thrown
+		// no exception shall be thrown
 	}
 	
 	@Test(expected = UnauthorizedException.class)
 	public void testEditingOtherArticleIsNotAllowed() throws UnauthorizedException {
-		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication(TEST_USER_ID_2, "user"));
-		//ArticleDTO toBeChangedArticle = this.articleCollectionDTO.getArticles().get(0);
+		when(mockSecurityContext.getAuthentication())
+			.thenReturn(new UserWithRolesAuthentication("TEST_USER", "user"));
 		
-		
-		
-		
-//		when(articleRepository.findById(1l)).thenReturn(Optional.of(toBeChangedArticle));
-//		toBeChangedArticle.setContent("CHANGED CONTENT");
-//		articleService.editArticle(toBeChangedArticle);
+		ArticleDTO dtoToChange = articleService.getAllArticles(false).getArticles().get(0);
+		Article changedArticle = this.articleMapper.dto2domain(dtoToChange);
+		changedArticle.setContent("CHANGED CONTENT");
+		articleService.editArticle(changedArticle);
 	}
-	
-//
-//  @Test
-//  public void testFeaturedArticlesAreReturnedCorrectly() {
-//
-//    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(null, null);
-//
-//    assertNotNull(allArticles.getFeatured());
-//    assertEquals(1, allArticles.getFeatured().size());
-//    assertFalse(allArticles.getFeatured().stream().anyMatch(articleDTO -> articleDTO.getId() == 1l));
-//    assertFalse(allArticles.getFeatured().stream().anyMatch(articleDTO -> articleDTO.getId() == 2l));
-//    assertFalse(allArticles.getFeatured().stream().anyMatch(articleDTO -> articleDTO.getId() == 3l));
-//    assertTrue(allArticles.getFeatured().stream().anyMatch(articleDTO -> articleDTO.getId() == 4l));
-//  }
-//
-//  @Test
-//  public void testOwnArticlesAreReturnedCorrectly() {
-//    Principal p = new PrincipalImpl("USER");
-//    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, null);
-//    assertNotNull(allArticles.getOwn());
-//    assertEquals(1, allArticles.getOwn().size());
-//    assertTrue(allArticles.getOwn().stream().anyMatch(articleDTO -> articleDTO.getId() == 3l));
-//  }
-//
-//  @Test
-//  public void testUnpublishedArticlesAreNotReturnedWhenNoUserIsLoggedIn() {
-//    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(null, null);
-//
-//    assertNotNull(allArticles.getUnpublished());
-//    assertTrue(allArticles.getOwn().isEmpty());
-//  }
-//
-//  @Test
-//  public void testUnpublishedArticlesOfOthersAreNotReturnedWhenUserIsLoggedInButIsRegularUser() {
-//    Principal p = new PrincipalImpl("TEST");
-//
-//    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, null);
-//
-//    assertNotNull(allArticles.getUnpublished());
-//    assertTrue(allArticles.getUnpublished().isEmpty());
-//  }
-//
-//  @Test
-//  public void testUnpublishedArticlesOfTheCurrentUserAreReturnedWhenUserIsLoggedIn() {
-//    Principal p = new PrincipalImpl("USER");
-//    Authentication authentication = new TestAuthentication(true, "user", "test");
-//
-//    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, authentication);
-//
-//    assertNotNull(allArticles.getUnpublished());
-//    assertFalse(allArticles.getUnpublished().isEmpty());
-//    assertEquals(1, allArticles.getUnpublished().size());
-//    assertEquals("Article 3", allArticles.getUnpublished().get(0).getTitle());
-//  }
-//
-//  @Test
-//  public void testUnpublishedArticlesOfOtherUsersAreReturnedWhenUserIsAdmin() {
-//    Principal p = new PrincipalImpl("TEST");
-//    Authentication authentication = new TestAuthentication(true, "admin", "test");
-//
-//    ArticleCollectionDTO allArticles = this.articleService.getAllArticles(p, authentication);
-//
-//    assertNotNull(allArticles.getUnpublished());
-//    assertFalse(allArticles.getUnpublished().isEmpty());
-//    assertEquals(1, allArticles.getUnpublished().size());
-//    assertEquals("Article 3", allArticles.getUnpublished().get(0).getTitle());
-//  }
-
-	private List<Article> getTestArticles() {
-		List<Article> articles = new ArrayList<>();
-
-		LocalDateTime firstArticleTime = LocalDateTime.of(2018, 1, 1, 10, 0);
-
-		
-		articles.add(Article.builder().id(1l)
-				.title("Article 1").subtitle("Article 1 Subtitle").content("Article 1 Content")
-				.authorId(TEST_USER_ID_1).published(true).featured(false)
-				.created(firstArticleTime).build());
-		articles.add(Article.builder().id(2l)
-				.title("Article 2").subtitle("Article 2 Subtitle").content("Article 2 Content")
-				.authorId(TEST_USER_ID_1).published(true).featured(false)
-				.created(firstArticleTime.plusDays(2)).build());
-		articles.add(Article.builder().id(3l)
-				.title("Article 3").subtitle("Article 3 Subtitle").content("Article 3 Content")
-				.authorId(TEST_USER_ID_2).published(false).featured(false)
-				.created(firstArticleTime.plusDays(4)).build());
-		articles.add(Article.builder().id(4l)
-				.title("Article 4").subtitle("Article 4 Subtitle").content("Article 4 Content")
-				.authorId(TEST_USER_ID_1).published(true).featured(true)
-				.created(firstArticleTime.plusDays(10)).build());
-		// articles.add(ArticleDTO.builder().id(5l).title("Article
-		// 2").authorId("TEST").published(true).featured(false).created(firstArticleTime.plusDays(2)).build());
-
-		return articles;
-	}
-
 }

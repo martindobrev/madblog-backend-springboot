@@ -1,5 +1,18 @@
 package com.noser.blog.service;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.api.ArticleDTO;
 import com.noser.blog.audit.EnableLogging;
@@ -11,23 +24,6 @@ import com.noser.blog.security.CheckEditArticle;
 import com.noser.blog.security.CheckManageArticles;
 import com.noser.blog.security.CheckViewArticlePermission;
 import com.noser.blog.security.UnauthorizedException;
-
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.security.Principal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @EnableAspectJAutoProxy
@@ -93,8 +89,6 @@ public class SimpleArticleService implements ArticleService {
 
 	@Override
 	@CheckEditArticle
-	@EnableLogging
-	@EnableLogging2
 	public ArticleDTO editArticle(Article article) throws UnauthorizedException {
 		final Optional<Article> existingArticleOptional = articleRepository.findById(article.getId());
 

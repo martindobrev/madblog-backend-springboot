@@ -98,19 +98,12 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
     final LocalDateTime created = LocalDateTime.parse(localDateTimeParts[1], DateTimeFormatter.ofPattern(localDateTimeParts[0]));
     final String content = lines.stream().reduce((s, s2) -> s + String.format("%n") + s2).get();
 
-    String userId;
-    if ("TIM".equals(userIdLine)) {
-      userId = TIM_USER_ID;
-    } else {
-      userId = DANIEL_USER_ID;
-    }
-
     articleRepository.save(
       Article.builder()
           .title(title)
           .subtitle(subtitle)
           .content(content)
-          .authorId(userId)
+          .authorId(userIdLine)
           .published(published)
           .featured(featured)
           .created(created)

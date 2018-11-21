@@ -1,7 +1,7 @@
 Frontend development tutorial (Angular)
 Here you will find detailed information about the frontend development topics covered in this tutorial
 frontend.jpg
-TIM
+5b8cc585-6e80-4ebf-834f-73f88572ab5f
 true
 true
 yyyy-MM-dd HH:mm|2018-11-01 14:30

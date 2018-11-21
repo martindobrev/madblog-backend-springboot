@@ -25,6 +25,4 @@ public class UserInfoController {
     }
     return new ResponseEntity<>(userDTO, HttpStatus.OK);
   }
-
-
 }

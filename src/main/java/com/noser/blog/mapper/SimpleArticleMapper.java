@@ -88,5 +88,4 @@ public class SimpleArticleMapper implements ArticleMapper {
         .imageId(articleDTO.getImageId())
         .build();
   }
-
 }
