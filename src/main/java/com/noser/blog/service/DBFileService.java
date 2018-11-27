@@ -1,16 +1,10 @@
 package com.noser.blog.service;
 
+import org.springframework.stereotype.Service;
+
 import com.noser.blog.domain.BlogFile;
 import com.noser.blog.repository.FileRepository;
 import com.noser.blog.security.CheckGetAllFilesPermission;
-
-import lombok.Getter;
-
-import java.security.Principal;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DBFileService implements FileService {

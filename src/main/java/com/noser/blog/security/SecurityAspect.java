@@ -62,6 +62,15 @@ public class SecurityAspect {
 			
 		}
 		
+		Optional<Article> originalArticle = this.articleRepository.findById(article.getId());
+		if (originalArticle.isPresent()) {
+			if (article.isPublished() != originalArticle.get().isPublished() || article.isFeatured() != originalArticle.get().isFeatured()) {
+				if (!this.allowedToPublishArticles(authentication)) {
+					throw new UnauthorizedException();
+				}
+			}
+		}
+		
 		if (!this.allowedToEditArticle(article.getId(), principal, authentication) ) {
 			log.warn("Unauthorized access - user {} cannot edit article with id {}", principal, article.getId());
 			throw new UnauthorizedException();
@@ -83,8 +92,6 @@ public class SecurityAspect {
 			throw new UnauthorizedException();
 		}
 	}
-	
-	
 	
 	@Before("@annotation(checkGetAllFilesPermission)")
 	public void checkGetAllFilesPermission(final JoinPoint joinPoint, CheckGetAllFilesPermission checkGetAllFilesPermission) throws UnauthorizedException {
@@ -108,7 +115,12 @@ public class SecurityAspect {
 		if (!articleOptional.isPresent()) {
 			return false;
 		}
+		
 		return AccessRights.canUserEditArticle(articleOptional.get(), principal, authentication);
+	}
+	
+	private boolean allowedToPublishArticles(Authentication authentication) {
+		return AccessRights.isAdminOrPublisher(authentication);
 	}
 	
 	private boolean allowedToViewArticle(Long id, Principal principal, Authentication authentication) {
@@ -118,7 +130,6 @@ public class SecurityAspect {
 		}
 		return false;
 	}
-
 	
 	private boolean allowedToManageFiles(Principal principal, Authentication authentication) {
 		if (principal == null || authentication == null) {

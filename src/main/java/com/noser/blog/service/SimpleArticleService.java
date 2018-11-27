@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.api.ArticleDTO;
-import com.noser.blog.audit.EnableLogging;
-import com.noser.blog.audit.EnableLogging2;
 import com.noser.blog.domain.Article;
 import com.noser.blog.mapper.ArticleMapper;
 import com.noser.blog.repository.ArticleRepository;
@@ -111,19 +109,8 @@ public class SimpleArticleService implements ArticleService {
 	}
 
 	@Override
-	public ArticleDTO changePublishedStatus(Article article, boolean status) {
-		Optional<Article> articleOptional = this.articleRepository.findById(article.getId());
-		if (articleOptional.isPresent()) {
-			final Article toBeChangedArticle = articleOptional.get();
-			toBeChangedArticle.setPublished(status);
-			return this.articleMapper.domain2dto(this.articleRepository.save(toBeChangedArticle), true);
-		}
-		return null;
-	}
-
-	@Override
-	public ArticleDTO changeFeaturedStatus(Article article, boolean status) {
+	public boolean deleteArticle(Article article) {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 }

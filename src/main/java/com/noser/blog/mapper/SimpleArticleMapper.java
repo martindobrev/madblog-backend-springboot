@@ -84,6 +84,7 @@ public class SimpleArticleMapper implements ArticleMapper {
         .title(articleDTO.getTitle())
         .subtitle(articleDTO.getSubtitle())
         .published(articleDTO.isPublished())
+        .featured(articleDTO.isFeatured())
         .created(articleDTO.getCreated())
         .imageId(articleDTO.getImageId())
         .build();
