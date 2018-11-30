@@ -1,16 +1,5 @@
 package com.noser.blog.bootstrap;
 
-import com.noser.blog.domain.Article;
-import com.noser.blog.domain.BlogFile;
-import com.noser.blog.repository.ArticleRepository;
-import com.noser.blog.repository.FileRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,13 +9,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
+
+import com.noser.blog.domain.Article;
+import com.noser.blog.domain.BlogFile;
+import com.noser.blog.domain.Page;
+import com.noser.blog.repository.ArticleRepository;
+import com.noser.blog.repository.FileRepository;
+import com.noser.blog.repository.PageRepository;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Component
 @Slf4j
 public class BootstrapSomeArticleData implements ApplicationListener<ApplicationReadyEvent> {
 
   private final ArticleRepository articleRepository;
-
   private final FileRepository fileRepository;
+  private final PageRepository pageRepository;
 
   private static final String TIM_USER_ID = "5b8cc585-6e80-4ebf-834f-73f88572ab5f";
   private static final String DANIEL_USER_ID = "94d26a9d-2b9f-43d0-b512-08955ee9a096";
@@ -34,16 +38,18 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
   private Map<String, Long> imageFileIds = new HashMap<>();
 
   @Autowired
-  public BootstrapSomeArticleData(final ArticleRepository articleReactiveRepository, final FileRepository fileRepository) {
+  public BootstrapSomeArticleData(final ArticleRepository articleReactiveRepository, 
+		  final FileRepository fileRepository, final PageRepository pageRepository) {
     this.articleRepository = articleReactiveRepository;
     this.fileRepository = fileRepository;
+    this.pageRepository = pageRepository;
   }
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
     addImages();
     addArticles();
-    log.info("Article count is: " + articleRepository.count());
+    addPages();
   }
 
   private void addImages() {
@@ -81,6 +87,28 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
         }
       }
     }
+  }
+  
+  private void addPages() {
+	  Page about = Page.builder()
+			  //.id(1l)
+			  .content("Hello from the new about page")
+			  .created(LocalDateTime.now())
+			  .order(1l)
+			  .name("About page")
+			  .slug("about")
+			  .published(true)
+			  .build();
+	  this.pageRepository.save(about);
+	  Page contact = Page.builder()
+			  //.id(2l)
+			  .content("Trying to find us??? Good luck :)")
+			  .created(LocalDateTime.now())
+			  .order(2l)
+			  .name("Contact")
+			  .slug("contact")
+			  .build();
+	  this.pageRepository.save(contact);
   }
 
   private void createArticleFromFile(File article) throws IOException {
