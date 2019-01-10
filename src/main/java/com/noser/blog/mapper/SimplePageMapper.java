@@ -10,23 +10,42 @@ import com.noser.blog.api.MenuDTO;
 import com.noser.blog.api.MenuEntryDTO;
 import com.noser.blog.api.PageDTO;
 import com.noser.blog.domain.Page;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.options.MutableDataSet;
 
 @Component
 public class SimplePageMapper implements PageMapper {
 
+	private final Parser parser;
+	private final HtmlRenderer renderer;
+	
+	public SimplePageMapper() {
+		MutableDataSet options = new MutableDataSet();
+		parser = Parser.builder(options).build();
+		renderer = HtmlRenderer.builder(options).build();
+	}
+	
 	@Override
-	public PageDTO domain2dto(Page page) {
+	public PageDTO domain2dto(final Page page, final boolean compileMarkdown) {
 		if (page == null) {
 			return null;
+		}
+		
+		String htmlContent = null;
+		if (compileMarkdown) {
+			htmlContent = renderer.render(parser.parse(page.getContent()));
 		}
 		
 		return PageDTO.builder()
 				.authorId(page.getAuthorId())
 				.id(page.getId())
 				.content(page.getContent())
+				.htmlContent(htmlContent)
 				.created(page.getCreated())
 				.name(page.getName())
 				.slug(page.getSlug())
+				.published(page.isPublished())
 				.order(page.getOrder())
 				.build();
 	}

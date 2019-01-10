@@ -3,19 +3,22 @@ package com.noser.blog;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class TestAuthentication implements Authentication {
 
-  private boolean authenticated;
+  private final boolean authenticated;
+  private final String name;
 
   private List<GrantedAuthority> authorities;
 
-  public TestAuthentication(boolean authenticated, String... authorities) {
+  public TestAuthentication(boolean authenticated, String principalName, String... authorities) {
     this.authenticated = authenticated;
-
+    this.name = principalName;
+    
     this.authorities = new ArrayList<>();
     for (String authority: authorities) {
       this.authorities.add(new TestGrantedAuthority(authority));
@@ -34,12 +37,20 @@ public class TestAuthentication implements Authentication {
     return null;
   }
 
-  @Override public Object getPrincipal() {
-    return null;
+  @Override 
+  public Object getPrincipal() {
+	  final String nameCopy = this.getName();
+	  return new Principal() {	
+    	@Override
+		public String getName() {
+			return nameCopy;
+		}
+    	
+    };
   }
 
   @Override public boolean isAuthenticated() {
-    return false;
+    return this.authenticated;
   }
 
   @Override public void setAuthenticated(boolean b) throws IllegalArgumentException {
@@ -47,6 +58,6 @@ public class TestAuthentication implements Authentication {
   }
 
   @Override public String getName() {
-    return null;
+    return this.name;
   }
 }

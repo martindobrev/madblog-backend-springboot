@@ -1,22 +1,27 @@
 package com.noser.blog.service;
 
+import static org.hamcrest.CoreMatchers.any;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.noser.blog.api.MenuDTO;
+import com.noser.blog.api.PageDTO;
 import com.noser.blog.domain.Page;
 import com.noser.blog.mapper.PageMapper;
 import com.noser.blog.mapper.SimplePageMapper;
@@ -40,13 +45,17 @@ public class DefaultPageServiceTest {
 	
 	@Test
 	public void testPageReordering() {
-		when(pageRepository.findAllByOrderByOrderDesc()).thenReturn(getMockPages(3));
+		when(pageRepository.findAllByOrderByOrderAsc()).thenReturn(getMockPages(3));
+		when(pageRepository.existsById(ArgumentMatchers.anyLong())).thenReturn(true);
+		when(pageRepository.findById(ArgumentMatchers.eq(1l))).thenReturn(Optional.of(getMockPages(3).get(0)));
+		when(pageRepository.findById(ArgumentMatchers.eq(2l))).thenReturn(Optional.of(getMockPages(3).get(1)));
+		when(pageRepository.findById(ArgumentMatchers.eq(3l))).thenReturn(Optional.of(getMockPages(3).get(2)));
 		
-		List<Page> reorderedPages = new ArrayList<Page>();
+		List<PageDTO> reorderedPages = new ArrayList<PageDTO>();
 		
-		reorderedPages.add(getMockPages(3).get(2));
-		reorderedPages.add(getMockPages(3).get(1));
-		reorderedPages.add(getMockPages(3).get(0));
+		reorderedPages.add(this.pageMapper.domain2dto(getMockPages(3).get(2), false));
+		reorderedPages.add(this.pageMapper.domain2dto(getMockPages(3).get(1), false));
+		reorderedPages.add(this.pageMapper.domain2dto(getMockPages(3).get(0), false));
 		
 		serviceUnderTest.reorderPages(reorderedPages);
 		
@@ -61,26 +70,27 @@ public class DefaultPageServiceTest {
 	
 	@Test
 	public void testGetMenu() {
-		when(pageRepository.findAllByOrderByOrderDesc()).thenReturn(getMockPages(3));
+		when(pageRepository.findAllByOrderByOrderAsc()).thenReturn(getMockPages(3));
 		
 		final MenuDTO menuDto = serviceUnderTest.getPageMenu();
 		
 		assertNotNull(menuDto);
 		assertEquals(3, menuDto.getMenuEntries().size());
-		assertEquals("Page 0", menuDto.getMenuEntries().get(0).getName());
-		assertEquals("Page 1", menuDto.getMenuEntries().get(1).getName());
-		assertEquals("Page 2", menuDto.getMenuEntries().get(2).getName());
+		assertEquals("Page 1", menuDto.getMenuEntries().get(0).getName());
+		assertEquals("Page 2", menuDto.getMenuEntries().get(1).getName());
+		assertEquals("Page 3", menuDto.getMenuEntries().get(2).getName());
 	}
 
 	private List<Page> getMockPages(final int n) {
 		List<Page> mockPages = new ArrayList<>();
-		for (int i = 0; i < n; i++) {
+		for (int i = 1; i <= n; i++) {
 			mockPages.add(
 					Page.builder()
 					.id(Long.valueOf(i))
 					.authorId("TEST")
 					.content("CONTENT " + i)
 					.created(LocalDateTime.now())
+					.published(true)
 					.order(Long.valueOf(i))
 					.name("Page " + i)
 					.slug("page" + i)

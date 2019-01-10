@@ -31,9 +31,9 @@ public class Page {
 	private String name;
 	
 	@NotNull
+	@Column(unique = true)
 	private String slug;
 	
-	@NotNull
 	@Column(name = "page_order")
 	private Long order;
 	

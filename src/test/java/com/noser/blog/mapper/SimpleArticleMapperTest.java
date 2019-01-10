@@ -3,6 +3,7 @@ package com.noser.blog.mapper;
 import com.noser.blog.TestAuthentication;
 import com.noser.blog.api.ArticleDTO;
 import com.noser.blog.domain.Article;
+import com.noser.blog.mock.SecurityContextMock;
 import com.noser.blog.service.KeycloakService;
 
 import org.junit.Before;
@@ -10,6 +11,8 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 
@@ -19,10 +22,7 @@ import static org.mockito.Mockito.when;
 
 public class SimpleArticleMapperTest {
 
-  // private final Principal testUser = new PrincipalImpl("user");
-//  private final Authentication adminAuthentication = new TestAuthentication(true, "admin");
-//  private final Authentication userAuthentication = new TestAuthentication(true, "user");
-//  private final Authentication publishedAuthentication = new TestAuthentication(true, "publisher");
+	private final Authentication userAuthentication = new TestAuthentication(true, "TEST_USER", "user");	
 	
   private SimpleArticleMapper articleMapperUnderTest;
 
@@ -34,23 +34,33 @@ public class SimpleArticleMapperTest {
 	  MockitoAnnotations.initMocks(this);
 	  when(keycloakServiceMock.getUserInfo(ArgumentMatchers.anyString())).thenReturn(null);
 	  articleMapperUnderTest = new SimpleArticleMapper(this.keycloakServiceMock);
+	  
+	  SecurityContextHolder.getContext().setAuthentication(userAuthentication);
+	  
+	  
   }
   
    
 
   private final Article ownArticle = Article.builder()
-      .authorId("user")
+	  .id(1l)  
+      .authorId("TEST_USER")
       .created(LocalDateTime.now())
       .title("Own Article")
+      .subtitle("Some subtitle")
+      .content("My TEST article is cool")
       .published(true)
       .featured(true)
       .build();
 
 
   private final Article foreignArticle = Article.builder()
+	  .id(2l)
       .authorId("someOtherUser")
       .created(LocalDateTime.now())
       .title("Foreign article")
+      .subtitle("FOREIGN SUBTITLE")
+      .content("NOT YOUR BUSINESS")
       .published(true)
       .featured(true)
       .build();
@@ -76,6 +86,7 @@ public class SimpleArticleMapperTest {
 
   @Test
   public void testMapperSetsEditableToFalseWhenNoUserIsLoggedIn() {
+	  SecurityContextHolder.setContext(SecurityContextMock.createAnonymousContext());
     final ArticleDTO articleDTO = articleMapperUnderTest.domain2dto(this.foreignArticle, false);
     assertFalse(articleDTO.isEditable());
   }

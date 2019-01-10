@@ -39,7 +39,6 @@ public class SimpleArticleService implements ArticleService {
 	@Override
 	@CheckManageArticles
 	public ArticleCollectionDTO getAllArticles(boolean loadUserInfo) {
-
 		Iterable<Article> allArticles = articleRepository.findAllByOrderByCreatedDesc();
 		
 		List<ArticleDTO> articleDTOs = new ArrayList<>();

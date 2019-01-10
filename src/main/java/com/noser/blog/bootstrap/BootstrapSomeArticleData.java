@@ -107,6 +107,7 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 			  .order(2l)
 			  .name("Contact")
 			  .slug("contact")
+			  .published(true)
 			  .build();
 	  this.pageRepository.save(contact);
   }

@@ -3,7 +3,7 @@ package com.noser.blog;
 import org.springframework.security.core.GrantedAuthority;
 
 class TestGrantedAuthority implements GrantedAuthority {
-
+	
   private final String authority;
 
   public TestGrantedAuthority(String authority) {

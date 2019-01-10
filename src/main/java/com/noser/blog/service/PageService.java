@@ -14,7 +14,7 @@ public interface PageService {
 	PageDTO getPageBySlug(final String slug);
 	PageDTO createPage(final Page page);
 	PageDTO editPage(final Page page);
-	PageCollectionDTO reorderPages(List<Page> pages);
+	PageCollectionDTO reorderPages(List<PageDTO> pages);
 	MenuDTO getPageMenu();
-	boolean deletePage(final long id);
+	PageDTO deletePage(final long id);
 }

@@ -16,4 +16,5 @@ public class PageDTO {
 	private String authorId;
 	private boolean published;
 	private LocalDateTime created;
+	private String htmlContent;
 }

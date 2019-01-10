@@ -1,5 +1,6 @@
 package com.noser.blog.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +30,8 @@ public class DefaultPageService implements PageService {
 	@Override
 	public PageCollectionDTO getPages() {
 		return PageCollectionDTO.builder()
-				.pages(StreamSupport.stream(this.pageRepository.findAll().spliterator(), false)
-						.map(this.pageMapper::domain2dto).collect(Collectors.toList()))
+				.pages(StreamSupport.stream(this.pageRepository.findAllByOrderByOrderAsc().spliterator(), false)
+						.map(page -> this.pageMapper.domain2dto(page,  false)).collect(Collectors.toList()))
 				.build();
 	}
 
@@ -42,7 +43,7 @@ public class DefaultPageService implements PageService {
 			return null;
 		}
 
-		return this.pageMapper.domain2dto(optionalPage.get());
+		return this.pageMapper.domain2dto(optionalPage.get(), true);
 	}
 
 	@Override
@@ -52,31 +53,46 @@ public class DefaultPageService implements PageService {
 
 	@Override
 	public PageDTO getPageBySlug(String slug) {
-		// TODO Auto-generated method stub
-		return null;
+		final Page page = this.pageRepository.findOneBySlug(slug);
+		if (page == null) {
+			return null;
+		}
+		return this.pageMapper.domain2dto(page, true);
 	}
 
 	@Override
 	public PageDTO createPage(Page page) {
-		// TODO Auto-generated method stub
-		return null;
+		page.setCreated(LocalDateTime.now());
+		page.setPublished(false);
+		page.setOrder(this.pageRepository.count());
+		Page savedPage = this.pageRepository.save(page);
+		return this.pageMapper.domain2dto(savedPage, false);
 	}
 
 	@Override
 	public PageDTO editPage(Page page) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!this.pageRepository.existsById(page.getId())) {
+			return null;
+		}
+		Page pageToBeEdited = this.pageRepository.findById(page.getId()).get();
+		pageToBeEdited.setContent(page.getContent());
+		pageToBeEdited.setName(page.getName());
+		pageToBeEdited.setPublished(page.isPublished());
+		return this.pageMapper.domain2dto(this.pageRepository.save(pageToBeEdited), false);
 	}
 
 	@Override
-	public PageCollectionDTO reorderPages(List<Page> pages) {
+	public PageCollectionDTO reorderPages(List<PageDTO> pages) {
 		List<PageDTO> pageDtos = new ArrayList<>();
 
 		if (pages != null) {
 			for (int i = 0; i < pages.size(); i++) {
-				final Page page = pages.get(i);
-				page.setOrder(Long.valueOf(i + 1));
-				pageDtos.add(this.pageMapper.domain2dto(this.pageRepository.save(page)));
+				final PageDTO pageDTO = pages.get(i);
+				if (this.pageRepository.existsById(pageDTO.getId())) {
+					final Page page = this.pageRepository.findById(pageDTO.getId()).get();
+					page.setOrder(Long.valueOf(i + 1));
+					pageDtos.add(this.pageMapper.domain2dto(this.pageRepository.save(page), false));
+				}
 			}
 		}
 
@@ -84,13 +100,23 @@ public class DefaultPageService implements PageService {
 	}
 
 	@Override
-	public boolean deletePage(long id) {
-		// TODO Auto-generated method stub
-		return false;
+	public PageDTO deletePage(long id) {
+		Optional<Page> page = this.pageRepository.findById(id);
+		if (page.isPresent()) {
+			Page pageToDelete = page.get();
+			PageDTO pageDTO = this.pageMapper.domain2dto(pageToDelete, false);
+			this.pageRepository.delete(page.get());
+			return pageDTO;
+		}
+		return null;
 	}
 
 	@Override
 	public MenuDTO getPageMenu() {
-		return this.pageMapper.getMenu(this.pageRepository.findAllByOrderByOrderDesc());
+		return this.pageMapper.getMenu(this.pageRepository.findAllByOrderByOrderAsc()
+				.stream()
+					.filter(page -> page.isPublished())
+					.collect(Collectors.toList())
+		);
 	}
 }

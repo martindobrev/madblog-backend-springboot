@@ -10,4 +10,6 @@ import com.noser.blog.domain.Page;
 @Repository
 public interface PageRepository extends CrudRepository<Page, Long> {
 	List<Page> findAllByOrderByOrderDesc();
+	List<Page> findAllByOrderByOrderAsc();
+	Page findOneBySlug(final String slug);
 }
