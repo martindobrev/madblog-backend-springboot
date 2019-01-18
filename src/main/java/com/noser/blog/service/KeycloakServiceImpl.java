@@ -1,7 +1,5 @@
 package com.noser.blog.service;
 
-import java.net.ConnectException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +9,6 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RoleMappingResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.noser.blog.api.UserDTO;
@@ -51,8 +48,6 @@ public class KeycloakServiceImpl implements KeycloakService {
       List<String> roles = roleMappingResource.getAll().getRealmMappings().stream().map(roleRepresentation -> roleRepresentation.getName()).collect(Collectors.toList());
 
       final UserRepresentation userRepresentation = user.toRepresentation();
-      // final List<String> realmRoles = userRepresentation.getRealmRoles();
-      // final Map<String, List<String>> clientRoles = userRepresentation.getClientRoles();
       return UserDTO.builder()
           .firstname(userRepresentation.getFirstName())
           .username(userRepresentation.getUsername())
