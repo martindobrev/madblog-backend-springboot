@@ -7,10 +7,12 @@ import java.util.Optional;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.noser.blog.config.BlogProperties;
 import com.noser.blog.domain.Article;
 import com.noser.blog.repository.ArticleRepository;
 
@@ -21,10 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SecurityAspect {
 	
+	private final BlogProperties blogProperties;
+	
 	private final ArticleRepository articleRepository;
 	
-	public SecurityAspect(final ArticleRepository articleRepository) {
+	public SecurityAspect(final ArticleRepository articleRepository, final BlogProperties blogProperties) {
 		this.articleRepository = articleRepository;
+		this.blogProperties = blogProperties;
 	}
 
 	@Before("@annotation(checkViewArticlePermission)")
@@ -96,6 +101,10 @@ public class SecurityAspect {
 	@Before("@annotation(checkGetAllFilesPermission)")
 	public void checkGetAllFilesPermission(final JoinPoint joinPoint, CheckGetAllFilesPermission checkGetAllFilesPermission) throws UnauthorizedException {
 		log.info("SecurityAspect.checkGetAllFilesPermission");
+		if (this.blogProperties.isSecurityDisabled()) {
+			log.warn("WARNING: Global security is disabled!");
+			return;
+		}
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Principal principal = null;
 		try {

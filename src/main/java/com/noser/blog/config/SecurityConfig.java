@@ -11,6 +11,9 @@ import org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter;
 import org.keycloak.adapters.springsecurity.filter.KeycloakSecurityContextRequestFilter;
 import org.keycloak.adapters.springsecurity.management.HttpSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,10 +30,18 @@ import org.springframework.context.annotation.FilterType;
 
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties(BlogProperties.class)
 @ComponentScan(basePackageClasses = KeycloakSecurityComponents.class, 
 excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.keycloak.adapters.springsecurity.management.HttpSessionManager"))
 public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
 {
+	
+	
+	private final BlogProperties blogProperties;
+	
+	public SecurityConfig(final BlogProperties blogProperties) {
+		this.blogProperties = blogProperties;
+	}
 
 	 @Bean
 	  public HttpSessionManager keycloakHttpSessionManager() {
@@ -93,7 +104,8 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     http.csrf().disable();
     http.headers().frameOptions().disable();    // must be disabled for H2 console
-    http.authorizeRequests()
+    if (!this.blogProperties.isSecurityDisabled()) {
+    	http.authorizeRequests()
         .antMatchers(HttpMethod.GET, "/api/v1/files").permitAll()
         .antMatchers(HttpMethod.POST,   "/api/v1/files").hasAnyAuthority("user", "admin", "publisher")
         .antMatchers(HttpMethod.DELETE,   "/api/v1/files/*").hasAnyAuthority("user", "admin", "publisher")
@@ -106,5 +118,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
         .antMatchers("/api/v1/user").authenticated()
         .antMatchers("/api/v1/own-articles").hasAuthority("user")
         .anyRequest().permitAll();
+    } else {
+    	http.authorizeRequests().anyRequest().permitAll();
+    }
+    
   }
 }

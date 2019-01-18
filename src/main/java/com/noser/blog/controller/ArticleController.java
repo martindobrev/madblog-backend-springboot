@@ -4,6 +4,9 @@ import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.api.ArticleDTO;
 import com.noser.blog.domain.Article;
 import com.noser.blog.service.ArticleService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +16,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Optional;
 
+@Api()
 @RestController
 @RequestMapping("/api/v1/")
 public class ArticleController {
@@ -24,8 +28,11 @@ public class ArticleController {
 		this.articleService = articleService;
 	}
 
+	@ApiOperation(value = "This will get a list of available articles", notes = "Articles content will only be "
+			+ "available as markdown (content property). "
+			+ "To get the parsed HTML in the field htmlContent, get the article by single ID")
 	@GetMapping("/articles")
-	public ArticleCollectionDTO getAllArticles(@RequestParam Optional<String> loadUserInfo) {
+	public ArticleCollectionDTO getAllArticles() {
 		return this.articleService.getAllArticles(false);
 	}
 

@@ -5,13 +5,19 @@ import lombok.Value;
 
 import java.time.LocalDateTime;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Value
 @Builder
 public class ArticleDTO {
   private Long id;
   private String title;
   private String subtitle;
+  
+  @ApiModelProperty(value = "article content as markdown")
   private String content;
+  
+  @ApiModelProperty(value = "parsed article content as html, only available when loading a single article")
   private String htmlContent;
   private String authorId;
   private Long imageId;

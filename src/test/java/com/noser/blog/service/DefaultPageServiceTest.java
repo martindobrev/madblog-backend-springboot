@@ -1,12 +1,10 @@
 package com.noser.blog.service;
 
-import static org.hamcrest.CoreMatchers.any;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -73,13 +71,16 @@ public class DefaultPageServiceTest {
 		when(pageRepository.findAllByOrderByOrderAsc()).thenReturn(getMockPages(3));
 		
 		final MenuDTO menuDto = serviceUnderTest.getPageMenu();
-		
+		int[] java = new int[2];
 		assertNotNull(menuDto);
 		assertEquals(3, menuDto.getMenuEntries().size());
 		assertEquals("Page 1", menuDto.getMenuEntries().get(0).getName());
 		assertEquals("Page 2", menuDto.getMenuEntries().get(1).getName());
 		assertEquals("Page 3", menuDto.getMenuEntries().get(2).getName());
 	}
+	
+	//@Test
+	//public void testGetPagesReturnsUnauthorizedException()
 
 	private List<Page> getMockPages(final int n) {
 		List<Page> mockPages = new ArrayList<>();

@@ -1,8 +1,10 @@
 package com.noser.blog.bootstrap;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.BufferedReader;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -53,40 +55,49 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
   }
 
   private void addImages() {
-    File imageDir = new File(this.getClass().getClassLoader().getResource("images").getFile());
-    if (imageDir.isDirectory()) {
-      for (File image : imageDir.listFiles()) {
-        try {
-          byte[] bytes = IOUtils.toByteArray(new FileInputStream(image));
-          BlogFile blogFile = fileRepository.save(BlogFile.builder()
-              .fileType("image/jpeg")
-              .name(image.getName())
-              .authorId(TIM_USER_ID)
-              .size(bytes.length)
-              .data(bytes)
-              .uploaded(LocalDateTime.now())
-              .build());
-          imageFileIds.put(blogFile.getName(), blogFile.getId());
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
+	  InputStream imagesList = this.getClass().getClassLoader().getResourceAsStream("images/list.txt");
+
+	  BufferedReader in = new BufferedReader(new InputStreamReader(imagesList));
+	  String imageFileName = null;
+
+	  try { 
+		  while((imageFileName = in.readLine()) != null) {
+			  log.info("Creating article from: {}", imageFileName);
+			  InputStream imageFileInputStream = this.getClass().getClassLoader().getResourceAsStream("images/" + imageFileName);
+			  byte[] bytes = IOUtils.toByteArray(imageFileInputStream);
+	          BlogFile blogFile = fileRepository.save(BlogFile.builder()
+	              .fileType("image/jpeg")
+	              .name(imageFileName)
+	              .authorId(TIM_USER_ID)
+	              .size(bytes.length)
+	              .data(bytes)
+	              .uploaded(LocalDateTime.now())
+	              .build());
+	          imageFileIds.put(blogFile.getName(), blogFile.getId());
+		  }
+	  } catch (IOException e) {
+		  e.printStackTrace();
+	  }
   }
 
 
 
   private void addArticles() {
-    File articlesDir = new File(this.getClass().getClassLoader().getResource("articles").getFile());
-    if (articlesDir.isDirectory()) {
-      for (File article : articlesDir.listFiles()) {
-        try {
-          createArticleFromFile(article);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
+	  InputStream articlesList = this.getClass().getClassLoader().getResourceAsStream("articles/list.txt");
+
+	  BufferedReader in = new BufferedReader(new InputStreamReader(articlesList));
+	  String articleFile = null;
+
+	  try { 
+		  while((articleFile = in.readLine()) != null) {
+			  log.info("Creating article from: {}", articleFile);
+			  InputStream articleInputStream = this.getClass().getClassLoader().getResourceAsStream("articles/" + articleFile);
+			  createArticleFromInputStream(articleInputStream);
+		  }
+	  } catch (IOException e) {
+		  e.printStackTrace();
+	  }
+
   }
   
   private void addPages() {
@@ -112,9 +123,9 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 	  this.pageRepository.save(contact);
   }
 
-  private void createArticleFromFile(File article) throws IOException {
+  private void createArticleFromInputStream(InputStream articleInputStream) throws IOException {
 
-    List<String> lines = IOUtils.readLines(new FileInputStream(article));
+    List<String> lines = IOUtils.readLines(articleInputStream);
 
     final String title = lines.remove(0);
     final String subtitle = lines.remove(0);
