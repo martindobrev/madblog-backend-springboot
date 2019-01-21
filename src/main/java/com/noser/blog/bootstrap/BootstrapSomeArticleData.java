@@ -62,7 +62,7 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 
 	  try { 
 		  while((imageFileName = in.readLine()) != null) {
-			  log.info("Creating article from: {}", imageFileName);
+			  log.info("Adding file: {}", imageFileName);
 			  InputStream imageFileInputStream = this.getClass().getClassLoader().getResourceAsStream("images/" + imageFileName);
 			  byte[] bytes = IOUtils.toByteArray(imageFileInputStream);
 	          BlogFile blogFile = fileRepository.save(BlogFile.builder()
