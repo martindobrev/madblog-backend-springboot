@@ -2,6 +2,7 @@ package com.noser.blog.mapper;
 
 import com.noser.blog.api.ArticleDTO;
 import com.noser.blog.api.UserDTO;
+import com.noser.blog.config.BlogProperties;
 import com.noser.blog.domain.Article;
 import com.noser.blog.security.AccessRights;
 import com.noser.blog.service.KeycloakService;
@@ -22,9 +23,11 @@ public class SimpleArticleMapper implements ArticleMapper {
   private final HtmlRenderer renderer;
   
   private final KeycloakService keycloakService;
+  private final BlogProperties blogProperties;
   
-  public SimpleArticleMapper(final KeycloakService keycloakService) {
+  public SimpleArticleMapper(final KeycloakService keycloakService, final BlogProperties blogProperties) {
 	  this.keycloakService = keycloakService;
+	  this.blogProperties = blogProperties;
 	  MutableDataSet options = new MutableDataSet();
 	  parser = Parser.builder(options).build();
 	  renderer = HtmlRenderer.builder(options).build();
@@ -66,8 +69,8 @@ public class SimpleArticleMapper implements ArticleMapper {
         .featured(article.isFeatured())
         .imageId(article.getImageId())
         .user(userDTO)
-        .editable(AccessRights.canUserEditArticle(article, principal, authentication))
-        .publishable(AccessRights.isAdminOrPublisher(authentication))
+        .editable(AccessRights.canUserEditArticle(article, principal, authentication) || this.blogProperties.isSecurityDisabled())
+        .publishable(AccessRights.isAdminOrPublisher(authentication) || this.blogProperties.isSecurityDisabled())
         .build();
   }
 

@@ -28,6 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.api.ArticleDTO;
 import com.noser.blog.api.UserDTO;
+import com.noser.blog.config.BlogProperties;
 import com.noser.blog.domain.Article;
 import com.noser.blog.mapper.ArticleMapper;
 import com.noser.blog.mapper.SimpleArticleMapper;
@@ -69,7 +70,7 @@ public class SimpleArticleServiceIT {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		SecurityContextHolder.setContext(mockSecurityContext);
-		this.articleMapper = new SimpleArticleMapper(null);
+		this.articleMapper = new SimpleArticleMapper(null, new BlogProperties());
 		
 		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication("TEST_ADMIN", "user", "publisher", "admin"));
 		when(mockKeycloakService.getUserInfo(ArgumentMatchers.anyString()))

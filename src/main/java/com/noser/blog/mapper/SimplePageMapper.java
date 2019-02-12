@@ -32,16 +32,10 @@ public class SimplePageMapper implements PageMapper {
 			return null;
 		}
 		
-		String htmlContent = null;
-		if (compileMarkdown) {
-			htmlContent = renderer.render(parser.parse(page.getContent()));
-		}
-		
 		return PageDTO.builder()
 				.authorId(page.getAuthorId())
 				.id(page.getId())
 				.content(page.getContent())
-				.htmlContent(htmlContent)
 				.created(page.getCreated())
 				.name(page.getName())
 				.slug(page.getSlug())

@@ -8,7 +8,7 @@ import java.security.Principal;
 public class AccessRights {
 
   public static boolean canUserEditArticle(final Article article, final Principal principal, final Authentication authentication) {
-    if (authentication == null || authentication.getAuthorities() == null || authentication.getAuthorities().isEmpty()) {
+	if (authentication == null || authentication.getAuthorities() == null || authentication.getAuthorities().isEmpty()) {
       return false;
     }
 

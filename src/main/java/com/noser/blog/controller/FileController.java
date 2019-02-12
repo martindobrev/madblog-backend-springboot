@@ -13,6 +13,8 @@ import java.util.Optional;
 import javax.imageio.ImageIO;
 
 import org.apache.http.entity.ContentType;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.noser.blog.api.BlogFileCollectionDTO;
 import com.noser.blog.api.BlogFileDTO;
 import com.noser.blog.domain.BlogFile;
+import com.noser.blog.domain.Thumbnail;
 import com.noser.blog.mapper.FileMapper;
 import com.noser.blog.service.FileService;
 
@@ -66,6 +69,7 @@ public class FileController {
     return this.fileMapper.domain2dto(blogFile);
   }
 
+  @Cacheable("images")
   @GetMapping(value = "/files/{id}")
   public @ResponseBody ResponseEntity<byte[]> getFile(@PathVariable Long id, @RequestParam Optional<Integer> size) throws IOException {
     final BlogFile file = this.fileService.getFile(id);
@@ -76,8 +80,11 @@ public class FileController {
     }
 
     if (size.isPresent()) {
-      httpHeaders.add("Content-Type", ContentType.IMAGE_JPEG.getMimeType());
-      return new ResponseEntity<>(createThumbnail(file, size.get()), httpHeaders, HttpStatus.OK);
+      final Thumbnail thumbnail = fileService.getThumbnail(file, size.get());
+      if (thumbnail.getData() != null) {
+    	  httpHeaders.add("Content-Type", ContentType.IMAGE_JPEG.getMimeType());
+    	  return new ResponseEntity<>(thumbnail.getData(), httpHeaders, HttpStatus.OK);
+      }
     }
 
     httpHeaders.add("Content-Type", ContentType.getByMimeType(file.getFileType()).toString());
@@ -95,13 +102,5 @@ public class FileController {
   @DeleteMapping(value = "/files/{id}")
   public boolean deleteFile(@PathVariable Long id) {
     return this.fileService.deleteFile(id);
-  }
-
-  private byte[] createThumbnail(final BlogFile file, int size) throws IOException {
-    InputStream imageIn = new ByteArrayInputStream(file.getData());
-    BufferedImage bufferedImage = Thumbnails.of(imageIn).size(size, size).asBufferedImage();
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    ImageIO.write(bufferedImage, "jpg", baos);
-    return baos.toByteArray();
   }
 }

@@ -3,7 +3,7 @@ Here you will find detailed information about the frontend development topics co
 frontend.jpg
 5b8cc585-6e80-4ebf-834f-73f88572ab5f
 true
-true
+false
 yyyy-MM-dd HH:mm|2018-11-01 14:30
 ### Following topics will be covered in details
 - **Authentication (via Keycloak)**

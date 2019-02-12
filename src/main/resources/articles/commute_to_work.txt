@@ -3,7 +3,7 @@ Whether commuting to work or just cruising through the city - riding a bike is a
 city-bike.jpg
 5b8cc585-6e80-4ebf-834f-73f88572ab5f
 true
-false
+true
 yyyy-MM-dd HH:mm|2018-03-07 14:30
 ### We always ride a bike!
 

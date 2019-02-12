@@ -1,0 +1,15 @@
+{"hints": [
+	{
+		"name": "blog.security-disabled",
+		"values": [
+			{
+				"value": "true",
+				"description": "Keycloak and Spring Security is active, but all requests are allowed"
+			},
+			{
+				"value": "false",
+				"description": "Default value - Keycloak and Spring Security are enabled"
+			}
+		]
+	}
+]}

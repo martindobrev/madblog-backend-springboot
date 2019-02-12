@@ -2,6 +2,7 @@ package com.noser.blog.mapper;
 
 import com.noser.blog.TestAuthentication;
 import com.noser.blog.api.ArticleDTO;
+import com.noser.blog.config.BlogProperties;
 import com.noser.blog.domain.Article;
 import com.noser.blog.mock.SecurityContextMock;
 import com.noser.blog.service.KeycloakService;
@@ -25,6 +26,8 @@ public class SimpleArticleMapperTest {
 	private final Authentication userAuthentication = new TestAuthentication(true, "TEST_USER", "user");	
 	
   private SimpleArticleMapper articleMapperUnderTest;
+  
+  private BlogProperties blogProperties = new BlogProperties();
 
   @Mock
   private KeycloakService keycloakServiceMock;
@@ -32,9 +35,9 @@ public class SimpleArticleMapperTest {
   @Before
   public void setup() {
 	  MockitoAnnotations.initMocks(this);
+	  this.blogProperties.setSecurityDisabled(false);
 	  when(keycloakServiceMock.getUserInfo(ArgumentMatchers.anyString())).thenReturn(null);
-	  articleMapperUnderTest = new SimpleArticleMapper(this.keycloakServiceMock);
-	  
+	  articleMapperUnderTest = new SimpleArticleMapper(this.keycloakServiceMock, this.blogProperties);	  
 	  SecurityContextHolder.getContext().setAuthentication(userAuthentication);
 	  
 	  

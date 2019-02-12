@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -35,6 +34,10 @@ public class SecurityAspect {
 	@Before("@annotation(checkViewArticlePermission)")
 	public void checkViewArticlePermission(final JoinPoint joinPoint, CheckViewArticlePermission checkViewArticlePermission) throws UnauthorizedException {
 		log.info("SecurityAspect.checkViewArticlePermission");
+		if (this.blogProperties.isSecurityDisabled()) {
+			log.warn("WARNING: Global security is disabled!");
+			return;
+		}
 		final Long articleId = (Long) joinPoint.getArgs()[0];
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Principal principal = null;
@@ -50,10 +53,13 @@ public class SecurityAspect {
 		}
 	}
 	
-	
 	@Before("@annotation(CheckEditArticle)")
 	public void checkEditArticlePermission(final JoinPoint joinPoint) throws UnauthorizedException {
 		log.info("SecurityAspect.checkEditArticlePermission");
+		if (this.blogProperties.isSecurityDisabled()) {
+			log.warn("WARNING: Global security is disabled!");
+			return;
+		}
 		final Article article = (Article) joinPoint.getArgs()[0];
 		if (article == null) {
 			throw new UnauthorizedException();
@@ -85,6 +91,10 @@ public class SecurityAspect {
 	@Before("@annotation(checkManageArticles)")
 	public void checkManageArticlesPermission(final JoinPoint joinPoint, CheckManageArticles checkManageArticles) throws UnauthorizedException {
 		log.info("SecurityAspect.checkManageArticlesPermission");
+		if (this.blogProperties.isSecurityDisabled()) {
+			log.warn("WARNING: Global security is disabled!");
+			return;
+		}
 		if (!((boolean) joinPoint.getArgs()[0])) {
 			return;
 		}
