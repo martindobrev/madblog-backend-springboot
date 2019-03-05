@@ -1,0 +1,47 @@
+version: "3"
+services:
+  web:
+    image: maddob/blog-backend:0.3.5
+    #deploy:
+    #  replicas: 3
+    #  resources:
+    #    limits:
+    #      cpus: "0.1"
+    #      memory: 500M
+    #  restart_policy:
+    #    condition: on-failure
+    ports:
+      - 4000:8000
+    networks:
+      - webnet
+     
+  postgres:
+    image: postgres:11
+    environment:
+      POSTGRES_PASSWORD: blog_secret
+      POSTGRES_USER: blog_user
+      POSTGRES_DB: blog
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - webnet
+    
+#  mysql:
+#    image: mysql/mysql-server:5.7
+#    environment:
+#      MYSQL_DATABASE: blog
+#      MYSQL_USER: blog_user
+#      MYSQL_PASSWORD: blog_secret
+#    ports:
+#      - "3306:3306"
+#    restart: always
+#    volumes:
+#      - ./docker:/var/lib/mysql
+#    networks:
+#      - webnet
+
+   
+
+networks:
+  webnet:

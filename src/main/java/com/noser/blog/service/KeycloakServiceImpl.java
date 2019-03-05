@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 public class KeycloakServiceImpl implements KeycloakService {
 
 	
+	
+	
   private final Keycloak keycloak;
   
   private final BlogProperties blogProperties;
