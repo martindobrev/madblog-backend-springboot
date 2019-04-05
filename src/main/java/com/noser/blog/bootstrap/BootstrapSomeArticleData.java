@@ -110,7 +110,7 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 
 	private void addPages() {
 		Page about = Page.builder()
-				//.id(1l)
+				.id(1l)
 				.content("Hello from the new about page")
 				.created(LocalDateTime.now())
 				.order(1l)
@@ -120,7 +120,7 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 				.build();
 		this.pageRepository.save(about);
 		Page contact = Page.builder()
-				//.id(2l)
+				.id(2l)
 				.content("Trying to find us??? Good luck :)")
 				.created(LocalDateTime.now())
 				.order(2l)

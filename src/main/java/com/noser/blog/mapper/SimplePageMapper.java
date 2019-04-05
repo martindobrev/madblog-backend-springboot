@@ -36,6 +36,7 @@ public class SimplePageMapper implements PageMapper {
 				.authorId(page.getAuthorId())
 				.id(page.getId())
 				.content(page.getContent())
+				.htmlContent(renderer.render(parser.parse(page.getContent())))
 				.created(page.getCreated())
 				.name(page.getName())
 				.slug(page.getSlug())

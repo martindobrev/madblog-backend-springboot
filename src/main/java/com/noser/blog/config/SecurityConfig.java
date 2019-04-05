@@ -31,96 +31,98 @@ import org.springframework.context.annotation.FilterType;
 @Configuration
 @EnableWebSecurity
 @EnableConfigurationProperties(BlogProperties.class)
-@ComponentScan(basePackageClasses = KeycloakSecurityComponents.class, 
-excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.keycloak.adapters.springsecurity.management.HttpSessionManager"))
-public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
-{
-	
-	
+@ComponentScan(basePackageClasses = KeycloakSecurityComponents.class, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.keycloak.adapters.springsecurity.management.HttpSessionManager"))
+public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+
 	private final BlogProperties blogProperties;
-	
+
 	public SecurityConfig(final BlogProperties blogProperties) {
 		this.blogProperties = blogProperties;
 	}
 
-	 @Bean
-	  public HttpSessionManager keycloakHttpSessionManager() {
-	    return new HttpSessionManager();
-	  }
+	@Bean
+	public HttpSessionManager keycloakHttpSessionManager() {
+		return new HttpSessionManager();
+	}
 
-	  @Bean
-	  @Override
-	  protected AdapterDeploymentContext adapterDeploymentContext() throws Exception {
-	    final AdapterDeploymentContextFactoryBean factoryBean = new AdapterDeploymentContextFactoryBean(new KeycloakSpringBootConfigResolver());
-	    factoryBean.afterPropertiesSet();
-	    return factoryBean.getObject();
-	  }
+	@Bean
+	@Override
+	protected AdapterDeploymentContext adapterDeploymentContext() throws Exception {
+		final AdapterDeploymentContextFactoryBean factoryBean = new AdapterDeploymentContextFactoryBean(
+				new KeycloakSpringBootConfigResolver());
+		factoryBean.afterPropertiesSet();
+		return factoryBean.getObject();
+	}
 
-	  @Autowired
-	  public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
-	    auth.authenticationProvider(keycloakAuthenticationProvider());
-	  }
+	@Autowired
+	public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(keycloakAuthenticationProvider());
+	}
 
-	  @Bean
-	  public FilterRegistrationBean<KeycloakAuthenticationProcessingFilter> keycloakAuthenticationProcessingFilterRegistrationBean(
-	      final KeycloakAuthenticationProcessingFilter filter) {
-	    final FilterRegistrationBean<KeycloakAuthenticationProcessingFilter> registrationBean = new FilterRegistrationBean<>(filter);
-	    registrationBean.setEnabled(false);
-	    return registrationBean;
-	  }
+	@Bean
+	public FilterRegistrationBean<KeycloakAuthenticationProcessingFilter> keycloakAuthenticationProcessingFilterRegistrationBean(
+			final KeycloakAuthenticationProcessingFilter filter) {
+		final FilterRegistrationBean<KeycloakAuthenticationProcessingFilter> registrationBean = new FilterRegistrationBean<>(
+				filter);
+		registrationBean.setEnabled(false);
+		return registrationBean;
+	}
 
-	  @Bean
-	  public FilterRegistrationBean<KeycloakPreAuthActionsFilter> keycloakPreAuthActionsFilterRegistrationBean(final KeycloakPreAuthActionsFilter filter) {
-	    final FilterRegistrationBean<KeycloakPreAuthActionsFilter> registrationBean = new FilterRegistrationBean<>(filter);
-	    registrationBean.setEnabled(false);
-	    return registrationBean;
-	  }
+	@Bean
+	public FilterRegistrationBean<KeycloakPreAuthActionsFilter> keycloakPreAuthActionsFilterRegistrationBean(
+			final KeycloakPreAuthActionsFilter filter) {
+		final FilterRegistrationBean<KeycloakPreAuthActionsFilter> registrationBean = new FilterRegistrationBean<>(
+				filter);
+		registrationBean.setEnabled(false);
+		return registrationBean;
+	}
 
-	  @Bean
-	  public FilterRegistrationBean<KeycloakAuthenticatedActionsFilter> keycloakAuthenticatedActionsFilterBean(final KeycloakAuthenticatedActionsFilter filter) {
-	    final FilterRegistrationBean<KeycloakAuthenticatedActionsFilter> registrationBean = new FilterRegistrationBean<>(filter);
-	    registrationBean.setEnabled(false);
-	    return registrationBean;
-	  }
+	@Bean
+	public FilterRegistrationBean<KeycloakAuthenticatedActionsFilter> keycloakAuthenticatedActionsFilterBean(
+			final KeycloakAuthenticatedActionsFilter filter) {
+		final FilterRegistrationBean<KeycloakAuthenticatedActionsFilter> registrationBean = new FilterRegistrationBean<>(
+				filter);
+		registrationBean.setEnabled(false);
+		return registrationBean;
+	}
 
-	  @Bean
-	  public FilterRegistrationBean<KeycloakSecurityContextRequestFilter> keycloakSecurityContextRequestFilterBean(
-	      final KeycloakSecurityContextRequestFilter filter) {
-	    final FilterRegistrationBean<KeycloakSecurityContextRequestFilter> registrationBean = new FilterRegistrationBean<>(filter);
-	    registrationBean.setEnabled(false);
-	    return registrationBean;
-	  }
+	@Bean
+	public FilterRegistrationBean<KeycloakSecurityContextRequestFilter> keycloakSecurityContextRequestFilterBean(
+			final KeycloakSecurityContextRequestFilter filter) {
+		final FilterRegistrationBean<KeycloakSecurityContextRequestFilter> registrationBean = new FilterRegistrationBean<>(
+				filter);
+		registrationBean.setEnabled(false);
+		return registrationBean;
+	}
 
-	  @Bean
-	  @Override
-	  protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-	    return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-	  }
+	@Bean
+	@Override
+	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+	}
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception
-  {
-    super.configure(http);
-    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    http.csrf().disable();
-    http.headers().frameOptions().disable();    // must be disabled for H2 console
-    if (!this.blogProperties.isSecurityDisabled()) {
-    	http.authorizeRequests()
-        .antMatchers(HttpMethod.GET, "/api/v1/files").permitAll()
-        .antMatchers(HttpMethod.POST,   "/api/v1/files").hasAnyAuthority("user", "admin", "publisher")
-        .antMatchers(HttpMethod.DELETE,   "/api/v1/files/*").hasAnyAuthority("user", "admin", "publisher")
-        .antMatchers(HttpMethod.GET, "/api/v1/files/*").permitAll()
-        .antMatchers(HttpMethod.GET,    "/api/v1/articles").permitAll()
-        .antMatchers(HttpMethod.POST,   "/api/v1/articles").hasAnyAuthority("user", "admin")
-        .antMatchers(HttpMethod.GET,    "/api/v1/articles/*").permitAll()
-        .antMatchers(HttpMethod.PUT,    "/api/v1/articles/*").hasAnyAuthority("user", "admin")
-        .antMatchers(HttpMethod.DELETE, "/api/v1/articles/*").hasAnyAuthority("admin", "user")
-        .antMatchers("/api/v1/user").authenticated()
-        .antMatchers("/api/v1/own-articles").hasAuthority("user")
-        .anyRequest().permitAll();
-    } else {
-    	http.authorizeRequests().anyRequest().permitAll();
-    }
-    
-  }
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		super.configure(http);
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+		http.csrf().disable();
+		http.headers().frameOptions().disable(); // must be disabled for H2 console
+		if (!this.blogProperties.isSecurityDisabled()) {
+			http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/v1/files").permitAll()
+					.antMatchers(HttpMethod.POST, "/api/v1/files").hasAnyAuthority("user", "admin", "publisher")
+					.antMatchers(HttpMethod.DELETE, "/api/v1/files/*").hasAnyAuthority("user", "admin", "publisher")
+					.antMatchers(HttpMethod.GET, "/api/v1/files/*").permitAll()
+					.antMatchers(HttpMethod.GET, "/api/v1/articles").permitAll()
+					.antMatchers(HttpMethod.POST, "/api/v1/articles").hasAnyAuthority("user", "admin")
+					.antMatchers(HttpMethod.GET, "/api/v1/articles/*").permitAll()
+					.antMatchers(HttpMethod.PUT, "/api/v1/articles/*").hasAnyAuthority("user", "admin")
+					.antMatchers(HttpMethod.DELETE, "/api/v1/articles/*").hasAnyAuthority("admin", "user")
+					.antMatchers("/api/v1/user").authenticated().antMatchers("/actuator").authenticated()
+					.antMatchers("/api/v1/own-articles").hasAuthority("user").anyRequest().permitAll();
+		} else {
+			http.authorizeRequests().anyRequest().permitAll();
+		}
+
+	}
 }

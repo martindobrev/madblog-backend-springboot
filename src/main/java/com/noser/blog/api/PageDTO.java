@@ -13,6 +13,7 @@ public class PageDTO {
 	private String slug;
 	private Long order;
 	private String content;
+	private String htmlContent;
 	private String authorId;
 	private boolean published;
 	private LocalDateTime created;
