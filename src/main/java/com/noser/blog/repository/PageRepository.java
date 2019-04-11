@@ -12,4 +12,6 @@ public interface PageRepository extends CrudRepository<Page, Long> {
 	List<Page> findAllByOrderByOrderDesc();
 	List<Page> findAllByOrderByOrderAsc();
 	Page findOneBySlug(final String slug);
+	List<Page> findAllByAuthorId(String authorId);
+	List<Page> findAllByPublished(boolean published);
 }

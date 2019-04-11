@@ -1,5 +1,6 @@
 package com.noser.blog.service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +8,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.noser.blog.api.MenuDTO;
 import com.noser.blog.api.PageCollectionDTO;
 import com.noser.blog.api.PageDTO;
+import com.noser.blog.api.PageInfoDTO;
 import com.noser.blog.domain.Page;
 import com.noser.blog.mapper.PageMapper;
 import com.noser.blog.repository.PageRepository;
@@ -118,5 +122,33 @@ public class DefaultPageService implements PageService {
 					.filter(page -> page.isPublished())
 					.collect(Collectors.toList())
 		);
+	}
+
+	@Override
+	public PageInfoDTO getPageInfo() {
+		
+		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Principal principal = null;
+		try {
+			principal = (Principal) authentication.getPrincipal();
+		} catch (ClassCastException exception) {
+			
+		}
+		return PageInfoDTO.builder()
+				.total(this.pageRepository.count())
+				.own(getOwnPages(principal))
+				.unpublished(getUnpublishedPages())
+				.build();
+	}
+
+	private long getUnpublishedPages() {
+		return this.pageRepository.findAllByPublished(false).size();
+	}
+
+	private long getOwnPages(Principal principal) {
+		if (principal == null || principal.getName() == null) {
+			return 0;
+		}
+		return this.pageRepository.findAllByAuthorId(principal.getName()).size();
 	}
 }

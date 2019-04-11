@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.api.ArticleDTO;
+import com.noser.blog.api.ArticleInfoDTO;
 import com.noser.blog.domain.Article;
 import com.noser.blog.mapper.ArticleMapper;
 import com.noser.blog.repository.ArticleRepository;
@@ -111,5 +112,39 @@ public class SimpleArticleService implements ArticleService {
 	public boolean deleteArticle(Article article) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public ArticleInfoDTO getArticleInfo() {
+		
+		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Principal principal = null;
+		try {
+			principal = (Principal) authentication.getPrincipal();
+		} catch (ClassCastException exception) {
+			
+		}
+		
+		return ArticleInfoDTO.builder()
+				.total(this.articleRepository.count())
+				.own(getOwnArticles(principal))
+				.unpublished(getUnpublishedCount())
+				.featured(getFeaturedCount())
+				.build();
+	}
+
+	private long getFeaturedCount() {
+		return this.articleRepository.findByFeatured(true).size();
+	}
+
+	private long getUnpublishedCount() {
+		return this.articleRepository.findByPublished(false).size();
+	}
+
+	private long getOwnArticles(Principal principal) {
+		if (principal == null || principal.getName() == null) {
+			return 0;
+		}
+		return this.articleRepository.findByAuthorId(principal.getName()).size();
 	}
 }

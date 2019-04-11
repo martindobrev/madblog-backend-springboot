@@ -2,6 +2,7 @@ package com.noser.blog.controller;
 
 import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.api.ArticleDTO;
+import com.noser.blog.api.ArticleInfoDTO;
 import com.noser.blog.domain.Article;
 import com.noser.blog.service.ArticleService;
 
@@ -59,5 +60,10 @@ public class ArticleController {
 	@GetMapping("/user")
 	public Principal getPrincipal(Principal principal) {
 		return principal;
+	}
+	
+	@GetMapping("/info/articles")
+	public ArticleInfoDTO getArticleInfo() {
+		return this.articleService.getArticleInfo();
 	}
 }

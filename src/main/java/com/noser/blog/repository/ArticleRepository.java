@@ -10,4 +10,6 @@ import java.util.List;
 public interface ArticleRepository extends PagingAndSortingRepository<Article, Long> {
   List<Article> findAllByOrderByCreatedDesc();
   List<Article> findByAuthorId(String authorId);
+  List<Article> findByPublished(boolean published);
+  List<Article> findByFeatured(boolean featured);
 }

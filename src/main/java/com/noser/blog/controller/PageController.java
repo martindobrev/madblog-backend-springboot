@@ -1,7 +1,6 @@
 package com.noser.blog.controller;
 
 import javax.validation.Valid;
-import javax.ws.rs.PathParam;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.noser.blog.api.MenuDTO;
 import com.noser.blog.api.PageCollectionDTO;
 import com.noser.blog.api.PageDTO;
+import com.noser.blog.api.PageInfoDTO;
 import com.noser.blog.domain.Page;
 import com.noser.blog.service.PageService;
 
@@ -69,5 +69,8 @@ public class PageController {
 		return this.pageService.editPage(page);
 	}
 	
-	//@Post
+	@GetMapping("/info/pages")
+	public PageInfoDTO getPageInfo() {
+		return this.pageService.getPageInfo();
+	}
 }
