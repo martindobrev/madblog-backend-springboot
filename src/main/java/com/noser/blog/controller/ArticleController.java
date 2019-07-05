@@ -8,14 +8,12 @@ import com.noser.blog.service.ArticleService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 import java.security.Principal;
-import java.util.Optional;
 
 @Api()
 @RestController
@@ -56,6 +54,11 @@ public class ArticleController {
 	public ArticleDTO editArticle(@PathVariable Long articleId, @RequestBody Article article) throws Exception {
 		return this.articleService.editArticle(article);
 	}
+	
+	@DeleteMapping("/articles/{articleId}")
+	public boolean deleteArticle(@PathVariable Long articleId) throws Exception {
+		return this.articleService.deleteArticle(articleId);
+	}
 
 	@GetMapping("/user")
 	public Principal getPrincipal(Principal principal) {
@@ -66,4 +69,6 @@ public class ArticleController {
 	public ArticleInfoDTO getArticleInfo() {
 		return this.articleService.getArticleInfo();
 	}
+	
+	
 }

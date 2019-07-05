@@ -6,11 +6,11 @@
 
 	<groupId>com.noser</groupId>
 	<artifactId>blog</artifactId>
-	<version>0.3.5-SNAPSHOT</version>
+	<version>0.3.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Noser Blog</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Blog backend project for testing and educational purposes</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

@@ -49,6 +49,20 @@ public class AccessRights {
             authority.getAuthority().equals("admin")
                 || authority.getAuthority().equals("publisher"));
   }
+  
+  public static boolean isAdmin(Authentication authentication) {
+	  if (authentication == null) {
+		  return false;
+	  }
+	  
+	  return authentication.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("admin"));
+  }
 
-
+  public static boolean canUserDeleteArticle(Article article, Principal principal, Authentication authentication) {
+	  if (authentication == null || authentication.getAuthorities() == null || authentication.getAuthorities().isEmpty()) {
+	      return false;
+	  } 
+	  
+	  return isOwnArticle(article, principal) || isAdmin(authentication);
+  }
 }

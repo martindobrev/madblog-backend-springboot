@@ -71,6 +71,7 @@ public class UserWithRolesAuthentication implements Authentication {
 	
 	@AllArgsConstructor
 	static class MockAuthority implements GrantedAuthority {
+		private static final long serialVersionUID = 1L;
 		@Getter private final String authority;
 	}
 

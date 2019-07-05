@@ -82,6 +82,7 @@ public class DefaultPageService implements PageService {
 		pageToBeEdited.setContent(page.getContent());
 		pageToBeEdited.setName(page.getName());
 		pageToBeEdited.setPublished(page.isPublished());
+		pageToBeEdited.setSlug(page.getSlug());
 		return this.pageMapper.domain2dto(this.pageRepository.save(pageToBeEdited), false);
 	}
 

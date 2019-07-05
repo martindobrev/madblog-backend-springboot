@@ -16,4 +16,5 @@ public interface ArticleService {
   boolean deleteArticle(Article article);
   List<ArticleDTO> getUserArticles(String userId);
   ArticleInfoDTO getArticleInfo();
+  boolean deleteArticle(Long articleId);
 }

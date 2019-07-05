@@ -109,26 +109,45 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 	}
 
 	private void addPages() {
-		Page about = Page.builder()
-				.id(1l)
-				.content("Hello from the new about page")
-				.created(LocalDateTime.now())
-				.order(1l)
-				.name("About page")
-				.slug("about")
-				.published(true)
-				.build();
-		this.pageRepository.save(about);
-		Page contact = Page.builder()
-				.id(2l)
-				.content("Trying to find us??? Good luck :)")
-				.created(LocalDateTime.now())
-				.order(2l)
-				.name("Contact")
-				.slug("contact")
-				.published(true)
-				.build();
-		this.pageRepository.save(contact);
+		
+		InputStream pagesList = this.getClass().getClassLoader().getResourceAsStream("pages/list.txt");
+		BufferedReader in = new BufferedReader(new InputStreamReader(pagesList));
+		String pageFile = null;
+		
+		try { 
+			while((pageFile = in.readLine()) != null) {
+				log.info("Creating article from: {}", pageFile);
+				InputStream pageInputStream = this.getClass().getClassLoader().getResourceAsStream("pages/" + pageFile);
+				createPageFromInputStream(pageInputStream);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void createPageFromInputStream(InputStream pageInputStream) throws IOException { 
+		
+		List<String> lines = IOUtils.readLines(pageInputStream);
+		
+		String name = lines.remove(0);
+		String slug = lines.remove(0);
+		Long order = Long.valueOf(lines.remove(0));
+		String authorId = lines.remove(0);
+		boolean published = Boolean.parseBoolean(lines.remove(0));
+		final String createdFormatAndDate = lines.remove(0);
+		final String[] localDateTimeParts = createdFormatAndDate.split("\\|");
+		final LocalDateTime created = LocalDateTime.parse(localDateTimeParts[1], DateTimeFormatter.ofPattern(localDateTimeParts[0]));
+		final String content = lines.stream().reduce((s, s2) -> s + String.format("%n") + s2).get();
+		
+		pageRepository.save(Page.builder()
+					.name(name)
+					.slug(slug)
+					.order(order)
+					.authorId(authorId)
+					.published(published)
+					.created(created)
+					.content(content)
+					.build());
 	}
 
 	private void createArticleFromInputStream(InputStream articleInputStream) throws IOException {

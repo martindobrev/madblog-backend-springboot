@@ -1,6 +1,5 @@
 package com.noser.blog.config;
 
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 
 import com.hazelcast.config.Config;

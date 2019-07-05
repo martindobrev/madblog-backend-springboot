@@ -1,20 +1,13 @@
 package com.noser.blog.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import javax.imageio.ImageIO;
-
 import org.apache.http.entity.ContentType;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,12 +31,13 @@ import com.noser.blog.mapper.FileMapper;
 import com.noser.blog.service.FileService;
 
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnails;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/")
 public class FileController {
+	
+	
 
   private final FileService fileService;
   private final FileMapper fileMapper;

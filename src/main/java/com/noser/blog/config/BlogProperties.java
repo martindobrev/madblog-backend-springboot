@@ -12,5 +12,10 @@ public class BlogProperties {
 
 	private boolean securityDisabled;
 	
+	private String keycloakAuthUrl = "http://localhost:8080/auth";
+	private String realm = "master";
+	private String user = "admin";
+	private String password = "passw0rd";
+	private String clientId = "admin-cli";
 	
 }

@@ -1,0 +1,26 @@
+features
+Features
+1
+UNKNOWN
+true
+yyyy-MM-dd HH:mm|2019-01-01 08:10
+# Features
+
+This project is ment to be a simple website and blog. It was started purely for testing and educational purposes. Nevertheless I plan to use it to build my personal homepage. Currently the main features are:
+
+- User Management
+  - Completely delegated to Keycloak for now
+  - You can register with your Google account. Github, Facebook and LinkedIn accounts will be integrated in the future.
+  - Users have the roles - admin, publisher and user. Actually these will probably never be used, but it was important to add some in order to test the security concepts :)
+  
+- Publishing
+  - Each user can write articles, but only a publisher is able to make them avaiable to the public. Admins can do whatever they want.
+  - Webpages can be managed only by admins 
+
+- Article and Page editors
+  - Articles and pages are written in Markdown. There is a special editor for that.
+  - File manager is available to choose images from easily. You can upload and add images to your articles directly from the editor by pressing the image icon.
+  - After that selecting the image will automatically add its url into the text.
+  
+**Many features such as comments etc. are to be added in the future.**
+

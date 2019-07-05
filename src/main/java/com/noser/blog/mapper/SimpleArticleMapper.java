@@ -70,6 +70,7 @@ public class SimpleArticleMapper implements ArticleMapper {
         .imageId(article.getImageId())
         .user(userDTO)
         .editable(AccessRights.canUserEditArticle(article, principal, authentication) || this.blogProperties.isSecurityDisabled())
+        .deletable(AccessRights.canUserDeleteArticle(article, principal, authentication) ||this.blogProperties.isSecurityDisabled())
         .publishable(AccessRights.isAdminOrPublisher(authentication) || this.blogProperties.isSecurityDisabled())
         .build();
   }

@@ -110,8 +110,11 @@ public class SimpleArticleService implements ArticleService {
 
 	@Override
 	public boolean deleteArticle(Article article) {
-		// TODO Auto-generated method stub
-		return false;
+		if (article == null) {
+			return false;
+		}
+		
+		return deleteArticle(article.getId());
 	}
 
 	@Override
@@ -146,5 +149,14 @@ public class SimpleArticleService implements ArticleService {
 			return 0;
 		}
 		return this.articleRepository.findByAuthorId(principal.getName()).size();
+	}
+
+	@Override
+	public boolean deleteArticle(Long articleId) {
+		if (this.articleRepository.existsById(articleId)) {
+			this.articleRepository.deleteById(articleId);
+			return true;
+		}
+		return false;
 	}
 }

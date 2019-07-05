@@ -29,11 +29,11 @@ public class KeycloakServiceImpl implements KeycloakService {
 
   public KeycloakServiceImpl(final BlogProperties blogProperties) {
     this.keycloak = Keycloak.getInstance(
-        "http://localhost:8080/auth",
+        blogProperties.getKeycloakAuthUrl(),
         "master",
-        "maddob",
-        "jordan",
-        "admin-cli");
+        blogProperties.getUser(),
+        blogProperties.getPassword(),
+        blogProperties.getClientId());
     this.blogProperties = blogProperties;
   }
   
@@ -45,7 +45,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 	  }
 	  
     try {
-      final UserResource user = this.keycloak.realm("Demo").users().get(id);
+      final UserResource user = this.keycloak.realm(this.blogProperties.getRealm()).users().get(id);
       final RoleMappingResource roleMappingResource = user.roles();
       List<String> roles = roleMappingResource.getAll().getRealmMappings().stream().map(roleRepresentation -> roleRepresentation.getName()).collect(Collectors.toList());
 

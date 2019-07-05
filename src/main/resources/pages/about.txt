@@ -1,0 +1,48 @@
+about
+About
+2
+UNKNOWN
+true
+yyyy-MM-dd HH:mm|2019-01-01 10:57
+# Why is this project created?
+
+The project your are currently viewing was created for testing purposes. Many techniques were tested during the development. Here are some of them:
+- Frontend (Angular)
+	- Keycloak integration as identity and access management
+	- Testing concepts
+    - Writing own form components
+    - Writing your own libraries npm libraries :)
+	- Services abstraction and mocking
+    - Profiling and environments setup (proxy, mocks, etc.)
+    - Using new angular features such as lazy loading modules
+    - Custom pipes and resolvers
+    - File-upload approaches
+    
+... and many more
+
+- Backend (SpringBoot 2)
+	- Completely decoupled backend (only REST API)
+    - Aspects for checking user access without polluting the main services' code
+    - Actuator info integration
+    - Swagger definition generation
+    - Dockerizing the backend
+    - Keycloak integration for security
+    - Custom Spring-Boot properties and configurations
+
+... 
+    
+# What is the status of the project? 
+
+The project is in dev state, not ready for production. I plan to start building both backend and frontend from the ground up in order to make things as they should be made. During the development there are many leftovers of unnecessary stuff, so stay tuned about the future releases.
+
+If you are still interested, you will find the source code on github:
+
+Angular frontend repository - https://github.com/martindobrev/madblog-frontend-angular.git
+
+Spring Boot backend - https://github.com/martindobrev/madblog-backend-springboot.git
+    
+Thanks for checking this project out
+
+Sincerely Yours,
+
+Martin
