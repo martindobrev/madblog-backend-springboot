@@ -11,6 +11,12 @@ import org.springframework.security.core.GrantedAuthority;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
 
+/**
+ * Authentication implementation to mock Keycloak Authentication
+ * 
+ * 
+ * @author maddob
+ */
 public class UserWithRolesAuthentication implements Authentication {
 
 	private static final long serialVersionUID = 1L;
