@@ -71,7 +71,6 @@ public class DefaultPageServiceTest {
 		when(pageRepository.findAllByOrderByOrderAsc()).thenReturn(getMockPages(3));
 		
 		final MenuDTO menuDto = serviceUnderTest.getPageMenu();
-		int[] java = new int[2];
 		assertNotNull(menuDto);
 		assertEquals(3, menuDto.getMenuEntries().size());
 		assertEquals("Page 1", menuDto.getMenuEntries().get(0).getName());

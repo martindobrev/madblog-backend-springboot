@@ -10,7 +10,9 @@ import java.util.List;
 
 public class TestAuthentication implements Authentication {
 
-  private final boolean authenticated;
+  
+private static final long serialVersionUID = 1L;
+private final boolean authenticated;
   private final String name;
 
   private List<GrantedAuthority> authorities;

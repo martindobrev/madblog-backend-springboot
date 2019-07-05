@@ -35,7 +35,7 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 	private final PageRepository pageRepository;
 
 	private static final String TIM_USER_ID = "5b8cc585-6e80-4ebf-834f-73f88572ab5f";
-	private static final String DANIEL_USER_ID = "94d26a9d-2b9f-43d0-b512-08955ee9a096";
+	// private static final String DANIEL_USER_ID = "94d26a9d-2b9f-43d0-b512-08955ee9a096";
 
 	private Map<String, Long> imageFileIds = new HashMap<>();
 

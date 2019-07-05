@@ -3,8 +3,6 @@ package com.noser.blog.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/messages")
 @Slf4j
 public class SseEmitterController {
-	
-	private ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 	
 	private final static List<SseEmitter> emitters = new ArrayList<>();
 	
