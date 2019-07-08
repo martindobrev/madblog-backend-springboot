@@ -1,6 +1,8 @@
 package com.noser.blog.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +29,11 @@ public class SettingsController {
 				.build();
 	}
 	
-	
-	
+	@PostMapping("settings")
+	public WebsitePropertiesDTO saveProperties(@RequestBody WebsitePropertiesDTO websiteProperties) {
+		this.settingsService.setWebsiteTitle(websiteProperties.getName());
+		this.settingsService.setWebsiteTitle(websiteProperties.getTitle());
+		this.settingsService.setLogoUrl(websiteProperties.getLogoUrl());
+		return websiteProperties;
+	}
 }

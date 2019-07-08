@@ -19,7 +19,6 @@ public class Settings {
 	@Id
 	private String name;
 	
-	@NotNull
 	private String value;
 	
 }
