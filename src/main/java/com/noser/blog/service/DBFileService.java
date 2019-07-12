@@ -94,9 +94,13 @@ public class DBFileService implements FileService {
 	
 	private byte[] resize(final byte[] originalData, int size) throws IOException {
 	    InputStream imageIn = new ByteArrayInputStream(originalData);
-	    BufferedImage bufferedImage = Thumbnails.of(imageIn).size(size, size).asBufferedImage();
+	    BufferedImage bufferedImage = Thumbnails.of(imageIn)
+	    		.size(size, size)
+	    		.outputFormat("png")
+	    		.imageType(BufferedImage.TYPE_INT_ARGB)
+	    		.asBufferedImage();
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    ImageIO.write(bufferedImage, "jpg", baos);
+	    ImageIO.write(bufferedImage, "png", baos);
 	    return baos.toByteArray();
 	  }
 

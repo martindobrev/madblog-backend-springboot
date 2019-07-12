@@ -31,7 +31,7 @@ public class SettingsController {
 	
 	@PostMapping("settings")
 	public WebsitePropertiesDTO saveProperties(@RequestBody WebsitePropertiesDTO websiteProperties) {
-		this.settingsService.setWebsiteTitle(websiteProperties.getName());
+		this.settingsService.setWebsiteName(websiteProperties.getName());
 		this.settingsService.setWebsiteTitle(websiteProperties.getTitle());
 		this.settingsService.setLogoUrl(websiteProperties.getLogoUrl());
 		return websiteProperties;
