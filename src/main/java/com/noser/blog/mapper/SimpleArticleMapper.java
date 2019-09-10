@@ -63,7 +63,7 @@ public class SimpleArticleMapper implements ArticleMapper {
         .title(article.getTitle())
         .subtitle(article.getSubtitle())
         .content(article.getContent())
-        .htmlContent(renderer.render(parser.parse(article.getContent())))
+        .htmlContent(extractUser ? renderer.render(parser.parse(article.getContent())): null)
         .created(article.getCreated())
         .published(article.isPublished())
         .featured(article.isFeatured())

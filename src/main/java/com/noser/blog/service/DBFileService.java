@@ -17,8 +17,10 @@ import com.noser.blog.repository.FileRepository;
 import com.noser.blog.repository.ThumbnailRepository;
 import com.noser.blog.security.CheckGetAllFilesPermission;
 
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 
+@Slf4j
 @Service
 public class DBFileService implements FileService {
 
@@ -77,7 +79,8 @@ public class DBFileService implements FileService {
 		try {
 			return createThumbnail(thumbnailId, file.getId(), file.getData(), size);
 		} catch (IOException exception) {
-			
+			log.error("Cannot create thumbnail from file {}", file.getName());
+			log.error(exception.getMessage());
 		}
 		
 		return null;

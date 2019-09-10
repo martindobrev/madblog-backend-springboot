@@ -68,7 +68,7 @@ public class DefaultPageService implements PageService {
 	public PageDTO createPage(Page page) {
 		page.setCreated(LocalDateTime.now());
 		page.setPublished(false);
-		page.setOrder(this.pageRepository.count());
+		page.setOrder(this.pageRepository.count() + 1);
 		Page savedPage = this.pageRepository.save(page);
 		return this.pageMapper.domain2dto(savedPage, false);
 	}
