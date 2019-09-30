@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.api.ArticleDTO;
 import com.noser.blog.api.ArticleInfoDTO;
+import com.noser.blog.api.ArticlePageDTO;
 import com.noser.blog.domain.Article;
 import com.noser.blog.mapper.ArticleMapper;
 import com.noser.blog.repository.ArticleRepository;
@@ -31,6 +35,8 @@ public class SimpleArticleService implements ArticleService {
 	private final ArticleRepository articleRepository;
 
 	private final ArticleMapper articleMapper;
+	
+	private final static int ARTICLE_PAGE_DEFAULT_SIZE = 5;
 
 	public SimpleArticleService(ArticleRepository articleRepository, ArticleMapper articleMapper) {
 		this.articleRepository = articleRepository;
@@ -40,11 +46,11 @@ public class SimpleArticleService implements ArticleService {
 	@Override
 	@CheckManageArticles
 	public ArticleCollectionDTO getAllArticles(boolean loadUserInfo) {
-		Iterable<Article> allArticles = articleRepository.findAllByOrderByCreatedDesc();
+		Iterable<Article> articles = articleRepository.findAllByOrderByCreatedDesc();
 		
 		List<ArticleDTO> articleDTOs = new ArrayList<>();
-		Iterator<Article> it = allArticles.iterator();
-
+		Iterator<Article> it = articles.iterator();
+		
 		while (it.hasNext()) {
 			ArticleDTO articleDTO = this.articleMapper.domain2dto(it.next(), loadUserInfo);
 			if (articleDTO != null) {
@@ -159,4 +165,28 @@ public class SimpleArticleService implements ArticleService {
 		}
 		return false;
 	}
+
+	@Override
+	public ArticlePageDTO getArticlePage(int pageNumber) {
+		
+		Page<Article> articlePage = this.articleRepository.findByPublishedTrue(
+				PageRequest.of(pageNumber , ARTICLE_PAGE_DEFAULT_SIZE, Sort.by("created").descending()));
+		
+		return ArticlePageDTO.builder()
+				.pageNumber(articlePage.getNumber())
+				.totalPages(articlePage.getTotalPages())
+				.articles(articlePage.get()
+						.map(article -> articleMapper.domain2dto(article, false))
+						.collect(Collectors.toList()))
+				.build();
+	}
+
+	@Override
+	public ArticleDTO getRandomFeaturedArticle() {
+		List<Article> featuredArticles = this.articleRepository.findByFeatured(true);
+		int size = featuredArticles.size();
+		Article randomArticle = featuredArticles.get((int) Math.floor(Math.random() * size)); 
+		return articleMapper.domain2dto(randomArticle, false);
+	}
+	
 }

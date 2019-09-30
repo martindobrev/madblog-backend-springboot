@@ -51,7 +51,7 @@ public class SimpleArticleMapperTest {
       .created(LocalDateTime.now())
       .title("Own Article")
       .subtitle("Some subtitle")
-      .content("My TEST article is cool")
+      .content("My TEST article is cool".getBytes())
       .published(true)
       .featured(true)
       .build();
@@ -63,7 +63,7 @@ public class SimpleArticleMapperTest {
       .created(LocalDateTime.now())
       .title("Foreign article")
       .subtitle("FOREIGN SUBTITLE")
-      .content("NOT YOUR BUSINESS")
+      .content("NOT YOUR BUSINESS".getBytes())
       .published(true)
       .featured(true)
       .build();

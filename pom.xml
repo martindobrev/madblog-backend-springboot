@@ -6,7 +6,7 @@
 
 	<groupId>com.noser</groupId>
 	<artifactId>blog</artifactId>
-	<version>0.3.6-SNAPSHOT</version>
+	<version>0.3.7-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Noser Blog</name>
@@ -191,6 +191,23 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			
+			<plugin>
+    <groupId>org.hibernate.orm.tooling</groupId>
+    <artifactId>hibernate-enhance-maven-plugin</artifactId>
+    <version>${hibernate.version}</version>
+    <executions>
+      <execution>
+         <configuration>
+            <failOnError>true</failOnError>
+            <enableLazyInitialization>true</enableLazyInitialization>
+         </configuration>
+         <goals>
+            <goal>enhance</goal>
+         </goals>
+      </execution>
+   </executions>
+</plugin>
 		</plugins>
 	</build>
 </project>

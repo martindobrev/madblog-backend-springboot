@@ -19,78 +19,66 @@ import java.security.Principal;
 @Component
 public class SimpleArticleMapper implements ArticleMapper {
 
-  private final Parser parser;
-  private final HtmlRenderer renderer;
-  
-  private final KeycloakService keycloakService;
-  private final BlogProperties blogProperties;
-  
-  public SimpleArticleMapper(final KeycloakService keycloakService, final BlogProperties blogProperties) {
-	  this.keycloakService = keycloakService;
-	  this.blogProperties = blogProperties;
-	  MutableDataSet options = new MutableDataSet();
-	  parser = Parser.builder(options).build();
-	  renderer = HtmlRenderer.builder(options).build();
-  }
+	private final Parser parser;
+	private final HtmlRenderer renderer;
 
-  @Override
-  public ArticleDTO domain2dto(Article article, boolean extractUser) {
-    if (article == null) {
-      return null;
-    }
-    
-    // Extract Authentication and Principal from the Security Context
-    final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	Principal principal = null;
-	try {
-		principal = (Principal) authentication.getPrincipal();
-	} catch (ClassCastException exception) {
-		
-	}
-	
-	if (!AccessRights.canUserViewArticle(article, principal, authentication)) {
-		return null;
-	}
-	
-	UserDTO userDTO = null;
-	if (extractUser) {
-		userDTO = this.keycloakService.getUserInfo(article.getAuthorId());
+	private final KeycloakService keycloakService;
+	private final BlogProperties blogProperties;
+
+	public SimpleArticleMapper(final KeycloakService keycloakService, final BlogProperties blogProperties) {
+		this.keycloakService = keycloakService;
+		this.blogProperties = blogProperties;
+		MutableDataSet options = new MutableDataSet();
+		parser = Parser.builder(options).build();
+		renderer = HtmlRenderer.builder(options).build();
 	}
 
-    return ArticleDTO.builder()
-        .authorId(article.getAuthorId())
-        .id(article.getId())
-        .title(article.getTitle())
-        .subtitle(article.getSubtitle())
-        .content(article.getContent())
-        .htmlContent(extractUser ? renderer.render(parser.parse(article.getContent())): null)
-        .created(article.getCreated())
-        .published(article.isPublished())
-        .featured(article.isFeatured())
-        .imageId(article.getImageId())
-        .user(userDTO)
-        .editable(AccessRights.canUserEditArticle(article, principal, authentication) || this.blogProperties.isSecurityDisabled())
-        .deletable(AccessRights.canUserDeleteArticle(article, principal, authentication) ||this.blogProperties.isSecurityDisabled())
-        .publishable(AccessRights.isAdminOrPublisher(authentication) || this.blogProperties.isSecurityDisabled())
-        .build();
-  }
+	@Override
+	public ArticleDTO domain2dto(Article article, boolean extractUser) {
+		if (article == null) {
+			return null;
+		}
 
-  @Override
-  public Article dto2domain(ArticleDTO articleDTO) {
-    if (articleDTO == null) {
-      return null;
-    }
+		// Extract Authentication and Principal from the Security Context
+		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Principal principal = null;
+		try {
+			principal = (Principal) authentication.getPrincipal();
+		} catch (ClassCastException exception) {
 
-    return Article.builder()
-        .id(articleDTO.getId())
-        .authorId(articleDTO.getAuthorId())
-        .content(articleDTO.getContent())
-        .title(articleDTO.getTitle())
-        .subtitle(articleDTO.getSubtitle())
-        .published(articleDTO.isPublished())
-        .featured(articleDTO.isFeatured())
-        .created(articleDTO.getCreated())
-        .imageId(articleDTO.getImageId())
-        .build();
-  }
+		}
+
+		if (!AccessRights.canUserViewArticle(article, principal, authentication)) {
+			return null;
+		}
+
+		UserDTO userDTO = null;
+		if (extractUser) {
+			userDTO = this.keycloakService.getUserInfo(article.getAuthorId());
+		}
+
+		return ArticleDTO.builder().authorId(article.getAuthorId()).id(article.getId()).title(article.getTitle())
+				.subtitle(article.getSubtitle()).content(new String(article.getContent()))
+				.htmlContent(extractUser ? renderer.render(parser.parse(new String(article.getContent()))) : null)
+				.created(article.getCreated()).published(article.isPublished()).featured(article.isFeatured())
+				.imageId(article.getImageId()).user(userDTO)
+				.editable(AccessRights.canUserEditArticle(article, principal, authentication)
+						|| this.blogProperties.isSecurityDisabled())
+				.deletable(AccessRights.canUserDeleteArticle(article, principal, authentication)
+						|| this.blogProperties.isSecurityDisabled())
+				.publishable(AccessRights.isAdminOrPublisher(authentication) || this.blogProperties.isSecurityDisabled())
+				.build();
+	}
+
+	@Override
+	public Article dto2domain(ArticleDTO articleDTO) {
+		if (articleDTO == null) {
+			return null;
+		}
+
+		return Article.builder().id(articleDTO.getId()).authorId(articleDTO.getAuthorId())
+				.content(articleDTO.getContent().getBytes()).title(articleDTO.getTitle()).subtitle(articleDTO.getSubtitle())
+				.published(articleDTO.isPublished()).featured(articleDTO.isFeatured()).created(articleDTO.getCreated())
+				.imageId(articleDTO.getImageId()).build();
+	}
 }

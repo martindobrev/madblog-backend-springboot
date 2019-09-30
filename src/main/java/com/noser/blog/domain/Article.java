@@ -28,7 +28,7 @@ public class Article {
 
   @Lob
   @NotNull
-  private String content;
+  private byte[] content;
 
   private String authorId;
 

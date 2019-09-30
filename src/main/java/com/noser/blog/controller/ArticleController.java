@@ -3,6 +3,7 @@ package com.noser.blog.controller;
 import com.noser.blog.api.ArticleCollectionDTO;
 import com.noser.blog.api.ArticleDTO;
 import com.noser.blog.api.ArticleInfoDTO;
+import com.noser.blog.api.ArticlePageDTO;
 import com.noser.blog.domain.Article;
 import com.noser.blog.service.ArticleService;
 
@@ -39,6 +40,16 @@ public class ArticleController {
 	public ArticleCollectionDTO getCompleteVisibleArticles() {
 		return this.articleService.getAllArticles(true);
 	}
+	
+	@GetMapping("/random-featured-article")
+	public ArticleDTO getRandomFeaturedArticle() {
+		return this.articleService.getRandomFeaturedArticle();
+	}
+	
+	@GetMapping("/articles/page/{pageNumber}")
+	public ArticlePageDTO getArticlePage(@PathVariable Long pageNumber) {
+		return this.articleService.getArticlePage(pageNumber.intValue());
+	}
 
 	@GetMapping("/articles/{articleId}")
 	public ArticleDTO getArticle(@PathVariable Long articleId) {
@@ -69,6 +80,8 @@ public class ArticleController {
 	public ArticleInfoDTO getArticleInfo() {
 		return this.articleService.getArticleInfo();
 	}
+	
+	
 	
 	
 }

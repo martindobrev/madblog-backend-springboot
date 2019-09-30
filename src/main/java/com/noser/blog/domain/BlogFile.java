@@ -24,6 +24,7 @@ public class BlogFile {
   private String name;
 
   @Lob
+  @Basic(fetch=FetchType.LAZY, optional = false)
   private byte[] data;
 
   private long size;
