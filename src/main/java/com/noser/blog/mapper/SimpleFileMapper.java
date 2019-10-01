@@ -2,6 +2,8 @@ package com.noser.blog.mapper;
 
 import com.noser.blog.api.BlogFileDTO;
 import com.noser.blog.domain.BlogFile;
+import com.noser.blog.domain.BlogFileView;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,4 +34,13 @@ public class SimpleFileMapper implements FileMapper {
         .id(blogFileDTO.getId())
         .build();
   }
+
+	@Override
+	public BlogFileDTO domain2dto(BlogFileView blogFileView) {
+		
+		return BlogFileDTO.builder()
+				.name(blogFileView.getName())
+				.id(blogFileView.getId())
+				.build();
+	}
 }

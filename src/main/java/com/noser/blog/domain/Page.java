@@ -41,7 +41,7 @@ public class Page {
 	
 	@Lob
 	@NotNull
-	private byte[] content;
+	private String content;
 	
 	private String authorId;
 	private boolean published;

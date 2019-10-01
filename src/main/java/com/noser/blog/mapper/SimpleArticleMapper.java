@@ -77,7 +77,7 @@ public class SimpleArticleMapper implements ArticleMapper {
 		}
 
 		return Article.builder().id(articleDTO.getId()).authorId(articleDTO.getAuthorId())
-				.content(articleDTO.getContent().getBytes()).title(articleDTO.getTitle()).subtitle(articleDTO.getSubtitle())
+				.content(articleDTO.getContent()).title(articleDTO.getTitle()).subtitle(articleDTO.getSubtitle())
 				.published(articleDTO.isPublished()).featured(articleDTO.isFeatured()).created(articleDTO.getCreated())
 				.imageId(articleDTO.getImageId()).build();
 	}

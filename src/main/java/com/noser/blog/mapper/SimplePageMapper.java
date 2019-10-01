@@ -53,7 +53,7 @@ public class SimplePageMapper implements PageMapper {
 		return Page.builder()
 			.id(pageDto.getId())
 			.authorId(pageDto.getAuthorId())
-			.content(pageDto.getContent().getBytes())
+			.content(pageDto.getContent())
 			.name(pageDto.getName())
 			.created(pageDto.getCreated())
 			.order(pageDto.getOrder())

@@ -148,7 +148,7 @@ public class SimpleArticleServiceIT {
 		when(mockSecurityContext.getAuthentication()).thenReturn(new AnonymousAuthentication());
 		Article toBeChangedArticle = this.articleMapper.dto2domain(this.articleService.getAllArticles(false).getArticles().get(0));
 		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication(toBeChangedArticle.getAuthorId(), "user"));
-		toBeChangedArticle.setContent("CHANGED CONTENT".getBytes());
+		toBeChangedArticle.setContent("CHANGED CONTENT");
 		articleService.editArticle(toBeChangedArticle);
 		// no exception shall be thrown
 	}
@@ -160,7 +160,7 @@ public class SimpleArticleServiceIT {
 		
 		ArticleDTO dtoToChange = articleService.getAllArticles(false).getArticles().get(0);
 		Article changedArticle = this.articleMapper.dto2domain(dtoToChange);
-		changedArticle.setContent("CHANGED CONTENT".getBytes());
+		changedArticle.setContent("CHANGED CONTENT");
 		articleService.editArticle(changedArticle);
 	}
 	

@@ -146,7 +146,7 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 					.authorId(authorId)
 					.published(published)
 					.created(created)
-					.content(content.getBytes())
+					.content(content)
 					.build());
 	}
 
@@ -169,7 +169,7 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 				Article.builder()
 				.title(title)
 				.subtitle(subtitle)
-				.content(content.getBytes())
+				.content(content)
 				.authorId(userIdLine)
 				.published(published)
 				.featured(featured)

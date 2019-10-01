@@ -88,7 +88,7 @@ public class DefaultPageServiceTest {
 					Page.builder()
 					.id(Long.valueOf(i))
 					.authorId("TEST")
-					.content(("CONTENT " + i).getBytes())
+					.content(("CONTENT " + i))
 					.created(LocalDateTime.now())
 					.published(true)
 					.order(Long.valueOf(i))

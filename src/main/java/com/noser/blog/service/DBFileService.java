@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.noser.blog.domain.BlogFile;
+import com.noser.blog.domain.BlogFileView;
 import com.noser.blog.domain.Thumbnail;
 import com.noser.blog.repository.FileRepository;
 import com.noser.blog.repository.ThumbnailRepository;
@@ -48,9 +49,9 @@ public class DBFileService implements FileService {
 	}
 
 	@Override
-	@CheckGetAllFilesPermission
-	public Iterable<BlogFile> getFiles(String name) {
-		return fileRepository.findAll();
+	//@CheckGetAllFilesPermission
+	public Iterable<BlogFileView> getFiles(String name) {
+		return fileRepository.findBlobFileView();
 	}
 
 	@Override
