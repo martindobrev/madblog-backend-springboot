@@ -15,7 +15,7 @@ public class BlogProperties {
 	private String keycloakAuthUrl = "http://localhost:8080/auth";
 	private String realm = "master";
 	private String user = "admin";
-	private String password = "passw0rd";
+	private String password = "admin";
 	private String clientId = "admin-cli";
 	
 }

@@ -57,7 +57,7 @@ public class KeycloakServiceImpl implements KeycloakService {
           .roles(roles)
           .lastname(userRepresentation.getLastName())
           .build();
-    } catch (NotFoundException exception) {
+    } catch (Exception exception) {
       return null;
     }
   }
