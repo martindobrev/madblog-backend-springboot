@@ -1,5 +1,6 @@
 package com.noser.blog.config;
 
+import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -7,6 +8,7 @@ import lombok.Data;
 
 @Component
 @Data
+@ToString
 @ConfigurationProperties(prefix="blog")
 public class BlogProperties {
 

@@ -39,11 +39,12 @@ public class KeycloakServiceImpl implements KeycloakService {
   
   public UserDTO getUserInfo(final String id) {
 	  log.info("Getting user by id {}", id);
+	  log.info("Blog Properties are: {}", this.blogProperties);
 	  // Do not contact keycloak server if security is disabled
 	  if (this.blogProperties.isSecurityDisabled()) {
 		  return UserDTO.builder().build();
 	  }
-	  
+
     try {
       final UserResource user = this.keycloak.realm(this.blogProperties.getRealm()).users().get(id);
       final RoleMappingResource roleMappingResource = user.roles();
@@ -58,6 +59,7 @@ public class KeycloakServiceImpl implements KeycloakService {
           .lastname(userRepresentation.getLastName())
           .build();
     } catch (Exception exception) {
+      log.warn("Exception when getting user data: {}", exception.getMessage());
       return null;
     }
   }
