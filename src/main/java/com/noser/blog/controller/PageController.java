@@ -2,6 +2,7 @@ package com.noser.blog.controller;
 
 import javax.validation.Valid;
 
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import com.noser.blog.service.PageService;
 
 @RestController
 @RequestMapping("/api/v1")
+@Api(tags = "Page")
 public class PageController {
 
 	private final PageService pageService;

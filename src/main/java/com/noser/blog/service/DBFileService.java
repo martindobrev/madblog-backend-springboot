@@ -8,7 +8,10 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import com.noser.blog.api.BlogFilePageDTO;
+import com.noser.blog.mapper.FileMapper;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.noser.blog.domain.BlogFile;
@@ -27,10 +30,12 @@ public class DBFileService implements FileService {
 
 	private final FileRepository fileRepository;
 	private final ThumbnailRepository thumbnailRepository;
+	private final FileMapper fileMapper;
 
-	public DBFileService(final FileRepository fileRepository, final ThumbnailRepository thumbnailRepository) {
+	public DBFileService(FileRepository fileRepository, ThumbnailRepository thumbnailRepository, FileMapper fileMapper) {
 		this.fileRepository = fileRepository;
 		this.thumbnailRepository = thumbnailRepository;
+		this.fileMapper = fileMapper;
 	}
 
 	@Override
@@ -62,6 +67,12 @@ public class DBFileService implements FileService {
 		
 		fileRepository.deleteById(id);
 		return true;
+	}
+
+	@Override public BlogFilePageDTO getFilePage(long pageNumber) {
+		return this.fileMapper.domainPage2dto(
+				this.fileRepository.findBlobFilePage(PageRequest.of((int) pageNumber, 20))
+		);
 	}
 
 	@Override

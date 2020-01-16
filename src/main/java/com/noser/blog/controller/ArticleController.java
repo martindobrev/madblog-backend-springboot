@@ -16,7 +16,7 @@ import javax.validation.Valid;
 
 import java.security.Principal;
 
-@Api(description = "Controller responsible for handling article actions (just a test action)")
+@Api(description = "Controller responsible for handling article actions (just a test action)", tags = "Article")
 @RestController
 @RequestMapping("/api/v1/")
 public class ArticleController {

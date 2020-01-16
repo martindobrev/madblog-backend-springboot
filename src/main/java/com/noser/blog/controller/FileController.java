@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.noser.blog.api.BlogFilePageDTO;
+import io.swagger.annotations.Api;
 import org.apache.http.entity.ContentType;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
@@ -35,9 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/")
+@Api(tags = "File")
 public class FileController {
-	
-	
 
   private final FileService fileService;
   private final FileMapper fileMapper;
@@ -89,12 +90,17 @@ public class FileController {
   public @ResponseBody BlogFileCollectionDTO getFiles() {
     final BlogFileCollectionDTO blogFileCollectionDTO = BlogFileCollectionDTO.builder().blogFiles(new ArrayList<>()).build();
     this.fileService.getFiles(null)
-        .forEach(blogFile -> blogFileCollectionDTO.getBlogFiles().add(this.fileMapper.domain2dto(blogFile)));
+        .forEach(blogFileView -> blogFileCollectionDTO.getBlogFiles().add(this.fileMapper.domainView2dto(blogFileView)));
     return blogFileCollectionDTO;
   }
 
   @DeleteMapping(value = "/files/{id}")
   public boolean deleteFile(@PathVariable Long id) {
     return this.fileService.deleteFile(id);
+  }
+
+  @GetMapping(value = "/filepage/{number}")
+  public BlogFilePageDTO getFilePage(@PathVariable Long number) {
+    return this.fileService.getFilePage(number);
   }
 }

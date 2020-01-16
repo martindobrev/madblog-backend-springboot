@@ -6,7 +6,7 @@
 
 	<groupId>com.noser</groupId>
 	<artifactId>blog</artifactId>
-	<version>0.3.7-SNAPSHOT</version>
+	<version>0.3.8-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Noser Blog</name>
@@ -36,8 +36,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
@@ -99,6 +97,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 
@@ -178,4 +182,89 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>docker</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>com.google.cloud.tools</groupId>
+						<artifactId>jib-maven-plugin</artifactId>
+						<configuration>
+							<to>
+								<image>docker.io/maddob/blog_backend</image>
+							</to>
+							<!--
+							<extraDirectories>
+								<paths>${project.build.directory}/dependency</paths>
+							</extraDirectories>
+							-->
+						</configuration>
+						<executions>
+							<execution>
+								<phase>deploy</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>com.google.cloud.tools</groupId>
+						<artifactId>jib-maven-plugin</artifactId>
+						<version>1.8.0</version>
+						<configuration>
+							<from>
+								<image>openjdk:11-slim</image>
+							</from>
+							<to>
+								<image>docker.io/maddob/blog_backend</image>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>latest</tag>
+								</tags>
+							</to>
+							<container>
+								<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+								<appRoot>/opt/mdw</appRoot>
+								<workingDirectory>/opt/mdw</workingDirectory>
+								<jvmFlags>
+									<jvmFlag>-server</jvmFlag>
+									<jvmFlag>-XX:InitialRAMPercentage=1.0</jvmFlag>
+									<jvmFlag>-XX:MinRAMPercentage=1.0</jvmFlag>
+									<jvmFlag>-XX:MaxRAMPercentage=15.0</jvmFlag>
+									<jvmFlag>-XX:InitiatingHeapOccupancyPercent=45</jvmFlag>
+
+									<jvmFlag>-Xverify:none</jvmFlag>
+									<jvmFlag>-XX:TieredStopAtLevel=1</jvmFlag>
+
+									<jvmFlag>-XX:+UseG1GC</jvmFlag>
+									<jvmFlag>-XX:MaxGCPauseMillis=200</jvmFlag>
+									<jvmFlag>-XX:+DisableExplicitGC</jvmFlag>
+									<jvmFlag>-XX:+ScavengeBeforeFullGC</jvmFlag>
+									<jvmFlag>-XX:+AlwaysPreTouch</jvmFlag>
+									<jvmFlag>-XX:+UseStringDeduplication</jvmFlag>
+									<jvmFlag>-XX:-PrintStringDeduplicationStatistics</jvmFlag>
+
+									<jvmFlag>-XX:+PrintGCDetails</jvmFlag>
+									<jvmFlag>-XX:+PrintGCDateStamps</jvmFlag>
+									<jvmFlag>-XX:+PrintGCTimeStamps</jvmFlag>
+									<jvmFlag>-XX:+UseGCLogFileRotation</jvmFlag>
+									<jvmFlag>-XX:NumberOfGCLogFiles=10</jvmFlag>
+									<jvmFlag>-XX:GCLogFileSize=50M</jvmFlag>
+									<jvmFlag>-Xloggc:/opt/mdw/log/gc.log</jvmFlag>
+								</jvmFlags>
+							</container>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

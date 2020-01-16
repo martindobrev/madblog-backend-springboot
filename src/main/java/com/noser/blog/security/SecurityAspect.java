@@ -151,7 +151,7 @@ public class SecurityAspect {
 	}
 	
 	private boolean allowedToManageFiles(Principal principal, Authentication authentication) {
-		if (principal == null || authentication == null) {
+		if (authentication == null) {
 			return false;
 		}
 		return authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("user"));

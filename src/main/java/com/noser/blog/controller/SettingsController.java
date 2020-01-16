@@ -1,5 +1,6 @@
 package com.noser.blog.controller;
 
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import com.noser.blog.service.SettingsService;
 
 @RestController
 @RequestMapping("/api/v1")
+@Api(tags = "Settings")
 public class SettingsController {
 
 	private final SettingsService settingsService;
