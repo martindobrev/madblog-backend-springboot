@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Api(description = "Controller responsible for handling article actions (just a test action)", tags = "Article")
 @RestController
@@ -40,14 +41,23 @@ public class ArticleController {
 	public ArticleCollectionDTO getCompleteVisibleArticles() {
 		return this.articleService.getAllArticles(true);
 	}
-	
+
 	@GetMapping("/random-featured-article")
 	public ArticleDTO getRandomFeaturedArticle() {
 		return this.articleService.getRandomFeaturedArticle();
 	}
-	
+
+//	@GetMapping("/articles/page/{pageNumber}")
+//	public ArticlePageDTO getArticlePage(@PathVariable Long pageNumber) {
+//		return this.articleService.getArticlePage(pageNumber.intValue());
+//	}
+
+
 	@GetMapping("/articles/page/{pageNumber}")
-	public ArticlePageDTO getArticlePage(@PathVariable Long pageNumber) {
+	public ArticlePageDTO getArticlePage(@PathVariable Long pageNumber, @RequestParam("name") Optional<String> nameQuery) {
+		if (nameQuery.isPresent()){
+			return this.articleService.getSearchArticlePage(pageNumber,nameQuery.get());
+		}
 		return this.articleService.getArticlePage(pageNumber.intValue());
 	}
 

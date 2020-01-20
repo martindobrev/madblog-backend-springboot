@@ -18,4 +18,5 @@ public interface ArticleRepository extends PagingAndSortingRepository<Article, L
   List<Article> findByFeatured(boolean featured);
   //List<Article> findAll();
   Page<Article> findByPublishedTrue(Pageable pageable);
+  Page<Article> findByPublishedTrueAndTitleIsContaining(Pageable pageable, String searchedTitle);
 }

@@ -1,6 +1,7 @@
 package com.noser.blog.mapper;
 
 import com.noser.blog.api.ArticleDTO;
+import com.noser.blog.api.ArticlePageDTO;
 import com.noser.blog.api.UserDTO;
 import com.noser.blog.config.BlogProperties;
 import com.noser.blog.domain.Article;
@@ -10,11 +11,13 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.options.MutableDataSet;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
+import java.util.stream.Collectors;
 
 @Component
 public class SimpleArticleMapper implements ArticleMapper {
@@ -80,5 +83,19 @@ public class SimpleArticleMapper implements ArticleMapper {
 				.content(articleDTO.getContent()).title(articleDTO.getTitle()).subtitle(articleDTO.getSubtitle())
 				.published(articleDTO.isPublished()).featured(articleDTO.isFeatured()).created(articleDTO.getCreated())
 				.imageId(articleDTO.getImageId()).build();
+	}
+
+	@Override
+	public ArticlePageDTO domainPage2dto(Page<Article> articlePage){
+		if (articlePage == null){
+			return null;
+		}
+
+		return ArticlePageDTO.builder()
+				.articles(articlePage.getContent().stream().map((Article article) -> domain2dto(article,false)).collect(Collectors.toList()))
+				.pageNumber(articlePage.getNumber())
+				.totalArticles(articlePage.getTotalElements())
+				.totalPages(articlePage.getTotalPages())
+				.build();
 	}
 }

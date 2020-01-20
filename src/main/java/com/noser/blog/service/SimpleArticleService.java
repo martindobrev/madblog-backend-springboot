@@ -77,6 +77,10 @@ public class SimpleArticleService implements ArticleService {
 		return null;
 	}
 
+	@Override public ArticlePageDTO getSearchArticlePage(long pageNumber, String query) {
+		return this.articleMapper.domainPage2dto(this.articleRepository.findByPublishedTrueAndTitleIsContaining(PageRequest.of((int) pageNumber, 5), query));
+	}
+
 	@Override
 	public ArticleDTO createArticle(Article article) {
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

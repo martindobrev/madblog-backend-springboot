@@ -15,5 +15,5 @@ public class ArticlePageDTO {
 	private List<ArticleDTO> articles;
 	private int pageNumber;
 	private int totalPages;
-	private int totalArticles;
+	private long totalArticles;
 }

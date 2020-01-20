@@ -20,4 +20,6 @@ public interface ArticleService {
   List<ArticleDTO> getUserArticles(String userId);
   ArticleInfoDTO getArticleInfo();
   boolean deleteArticle(Long articleId);
+  ArticlePageDTO getSearchArticlePage(long pageNumber, String query);
+
 }
