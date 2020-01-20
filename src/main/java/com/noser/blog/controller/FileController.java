@@ -95,21 +95,11 @@ public class FileController {
   }
 
   @GetMapping(value = "/filepage/{number}")
-  public BlogFilePageDTO getFilePage(@PathVariable Long number) {
+  public BlogFilePageDTO getFilePage(@PathVariable Long number, @RequestParam("name") Optional<String> nameQuery) {
+    if (nameQuery.isPresent()) {
+        return this.fileService.getSearchFilePage(number, nameQuery.get());
+    }
     return this.fileService.getFilePage(number);
-  }
-
-
-//  @GetMapping(value = "/filepages/{fileName}")
-//  public BlogFileDTO getFilePageSearchByName(@PathVariable String fileName){
-//    log.warn(fileName);
-//    return this.fileService.getFilePageSearchName(fileName);
-//  }
-
-  @GetMapping(value = "/filepages/{fileName}")
-  public Collection<BlogFileDTO> getAllFilesSearchByName(@PathVariable String fileName){
-    log.warn(fileName);
-    return this.fileService.getAllFilesSearchByName(fileName);
   }
 
 }

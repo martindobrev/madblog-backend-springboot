@@ -21,12 +21,7 @@ public interface FileRepository extends CrudRepository<BlogFile, Long> {
 	@Query("SELECT new com.noser.blog.domain.BlogFileView(b.id, b.name, b.size, b.authorId, b.fileType, b.uploaded) FROM BlogFile b")
 	Page<BlogFileView> findBlobFilePage(Pageable pageable);
 
-	@Query("SELECT new com.noser.blog.domain.BlogFile(b.id, b.name, b.data, b.size, b.authorId, b.fileType, b.uploaded) FROM BlogFile b WHERE b.name LIKE %:name%")
-	BlogFile findByName( String name);
+	@Query("SELECT new com.noser.blog.domain.BlogFileView(b.id, b.name, b.size, b.authorId, b.fileType, b.uploaded) FROM BlogFile b WHERE LOWER(b.name) LIKE CONCAT('%',:searchName,'%')")
+	Page<BlogFileView> findBlobFilePageByName(Pageable pageable, String searchName);
 
-	@Query("SELECT new com.noser.blog.domain.BlogFile(b.id, b.name, b.data, b.size, b.authorId, b.fileType, b.uploaded) FROM BlogFile b WHERE b.name LIKE %:name%")
-	Collection<BlogFile> findAllByName(String name);
-
-//	@Query("SELECT new com.noser.blog.domain.BlogFileView(b.id, b.name, b.size, b.authorId, b.fileType, b.uploaded) FROM BlogFile b WHERE b.name LIKE :name")
-//	Page<BlogFileView> findAllByName(Pageable pageable, String name);
 }
