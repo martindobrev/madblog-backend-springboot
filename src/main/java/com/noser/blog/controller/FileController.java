@@ -100,7 +100,11 @@ public class FileController {
   }
 
   @GetMapping(value = "/filepage/{number}")
-  public BlogFilePageDTO getFilePage(@PathVariable Long number) {
+  public BlogFilePageDTO getFilePage(@PathVariable Long number, @RequestParam("name") Optional<String> nameQuery) {
+    if (nameQuery.isPresent()) {
+        return this.fileService.getSearchFilePage(number, nameQuery.get());
+    }
     return this.fileService.getFilePage(number);
   }
+
 }

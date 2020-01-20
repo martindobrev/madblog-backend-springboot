@@ -75,6 +75,10 @@ public class DBFileService implements FileService {
 		);
 	}
 
+	@Override public BlogFilePageDTO getSearchFilePage(long pageNumber, String query) {
+		return this.fileMapper.domainPage2dto(this.fileRepository.findBlobFilePageByName(PageRequest.of((int) pageNumber, 20), query));
+	}
+
 	@Override
 	@Cacheable("thumbnails")
 	public Thumbnail getThumbnail(BlogFile file, int size) {
