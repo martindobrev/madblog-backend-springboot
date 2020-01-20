@@ -1,9 +1,11 @@
 package com.noser.blog.controller;
 
+import java.io.Console;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import com.noser.blog.api.BlogFilePageDTO;
@@ -15,14 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.noser.blog.api.BlogFileCollectionDTO;
@@ -103,4 +98,18 @@ public class FileController {
   public BlogFilePageDTO getFilePage(@PathVariable Long number) {
     return this.fileService.getFilePage(number);
   }
+
+
+//  @GetMapping(value = "/filepages/{fileName}")
+//  public BlogFileDTO getFilePageSearchByName(@PathVariable String fileName){
+//    log.warn(fileName);
+//    return this.fileService.getFilePageSearchName(fileName);
+//  }
+
+  @GetMapping(value = "/filepages/{fileName}")
+  public Collection<BlogFileDTO> getAllFilesSearchByName(@PathVariable String fileName){
+    log.warn(fileName);
+    return this.fileService.getAllFilesSearchByName(fileName);
+  }
+
 }
