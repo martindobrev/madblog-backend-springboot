@@ -12,4 +12,5 @@ public interface FileService {
   Thumbnail getThumbnail(BlogFile file, int size);
   boolean deleteFile(final Long id);
   BlogFilePageDTO getFilePage(long pageNumber);
+  BlogFilePageDTO getSearchFilePage(long pageNumber, String query);
 }
