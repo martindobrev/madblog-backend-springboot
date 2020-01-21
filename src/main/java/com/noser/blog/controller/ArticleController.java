@@ -97,10 +97,5 @@ public class ArticleController {
 	public ArticleInfoDTO getArticleInfo() {
 		return this.articleService.getArticleInfo();
 	}
-
-
-	
-	
-	
 	
 }

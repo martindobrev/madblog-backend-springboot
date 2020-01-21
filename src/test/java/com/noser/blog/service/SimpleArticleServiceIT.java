@@ -10,6 +10,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
@@ -71,7 +72,6 @@ public class SimpleArticleServiceIT {
 		MockitoAnnotations.initMocks(this);
 		SecurityContextHolder.setContext(mockSecurityContext);
 		this.articleMapper = new SimpleArticleMapper(null, new BlogProperties());
-		
 		when(mockSecurityContext.getAuthentication()).thenReturn(new UserWithRolesAuthentication("TEST_ADMIN", "user", "publisher", "admin"));
 		when(mockKeycloakService.getUserInfo(ArgumentMatchers.anyString()))
 				.thenReturn(UserDTO.builder().id("TEST").firstname("TIM").lastname("TEST").build());
@@ -210,6 +210,104 @@ public class SimpleArticleServiceIT {
 		Article changedArticle = this.articleMapper.dto2domain(dtoToChange);
 		changedArticle.setFeatured(!dtoToChange.isFeatured());
 		articleService.editArticle(changedArticle);
+	}
+
+	@DisplayName("Test that search checks the article title")
+	@Test
+	public void testSearchChecksArticleTitle() {
+		// given - initial data articles are present
+
+		// when
+		// when
+		final ArticleCollectionDTO searchResults =
+				articleService.getAllArticlesBySearchTitle("tech stack");
+
+		// then
+		assertNotNull(searchResults);
+		assertNotNull(searchResults.getArticles());
+		assertEquals(1, searchResults.getArticles().size());
+		assertEquals("Our tech stack", searchResults.getArticles().get(0).getTitle());
+	}
+
+	@DisplayName("Test that search checks the article title CASE INSENSITIVE")
+	@Test
+	public void testSearchChecksArticleTitleCaseInsensitive() {
+		// given - initial data articles are present
+
+		// when
+		// when
+		final ArticleCollectionDTO searchResults =
+				articleService.getAllArticlesBySearchTitle("TecH STaCk");
+
+		// then
+		assertNotNull(searchResults);
+		assertNotNull(searchResults.getArticles());
+		assertEquals(1, searchResults.getArticles().size());
+		assertEquals("Our tech stack", searchResults.getArticles().get(0).getTitle());
+	}
+
+	@DisplayName("Test that search also checks the subtitle property")
+	@Test
+	public void testSearchAlsoIncludesSubtitles() {
+		// given - initial data articles are present
+
+		// when
+		final ArticleCollectionDTO searchResults =
+				articleService.getAllArticlesBySearchTitle("about the backend development topics");
+
+		// then
+		assertNotNull(searchResults);
+		assertNotNull(searchResults.getArticles());
+		assertEquals(1, searchResults.getArticles().size());
+		assertEquals("Frontend development tutorial (Angular)", searchResults.getArticles().get(0).getTitle());
+	}
+
+	@DisplayName("Test that search also checks the subtitle property CASE INSENSITIVE")
+	@Test
+	public void testSearchAlsoIncludesSubtitlesCaseInsensitive() {
+		// given - initial data articles are present
+
+		// when
+		final ArticleCollectionDTO searchResults =
+				articleService.getAllArticlesBySearchTitle("ABOUT the bACKenD deVelopment topics");
+
+		// then
+		assertNotNull(searchResults);
+		assertNotNull(searchResults.getArticles());
+		assertEquals(1, searchResults.getArticles().size());
+		assertEquals("Frontend development tutorial (Angular)", searchResults.getArticles().get(0).getTitle());
+	}
+
+	@DisplayName("Test that search also searches the content of articles")
+	@Test
+	public void testSearchAlsoIncludesContent() {
+		// given - initial data articles are present
+
+		// when
+		final ArticleCollectionDTO searchResults =
+				articleService.getAllArticlesBySearchTitle("WE ARE JAVA EXPERTS");
+
+		// then
+		assertNotNull(searchResults);
+		assertNotNull(searchResults.getArticles());
+		assertEquals(1, searchResults.getArticles().size());
+		assertEquals("Our tech stack", searchResults.getArticles().get(0).getTitle());
+	}
+
+	@DisplayName("Test that content search is case insensitive")
+	@Test
+	public void testSearchAlsoIncludesContentCaseInsensitive() {
+		// given - initial data articles are present
+
+		// when
+		final ArticleCollectionDTO searchResults =
+				articleService.getAllArticlesBySearchTitle("we are java experts");
+
+		// then
+		assertNotNull(searchResults);
+		assertNotNull(searchResults.getArticles());
+		assertEquals(1, searchResults.getArticles().size());
+		assertEquals("Our tech stack", searchResults.getArticles().get(0).getTitle());
 	}
 	
 }
