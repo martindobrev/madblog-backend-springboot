@@ -21,5 +21,6 @@ public interface ArticleService {
   ArticleInfoDTO getArticleInfo();
   boolean deleteArticle(Long articleId);
   ArticlePageDTO getSearchArticlePage(long pageNumber, String query);
+  ArticleCollectionDTO getAllArticlesBySearchTitle(String searchQuery);
 
 }

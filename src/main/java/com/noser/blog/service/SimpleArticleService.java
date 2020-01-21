@@ -62,6 +62,22 @@ public class SimpleArticleService implements ArticleService {
 			.articles(articleDTOs)
 			.build();
 	}
+
+	public ArticleCollectionDTO getAllArticlesBySearchTitle(String searchQuery){
+		Iterable<Article> articles = articleRepository.findAllByTitleIgnoreCaseIsContaining(searchQuery);
+		List<ArticleDTO> articleDTOS = new ArrayList<>();
+		Iterator<Article> articleIterator = articles.iterator();
+
+		while (articleIterator.hasNext()){
+			ArticleDTO articleDTO = this.articleMapper.domain2dto(articleIterator.next(),false);
+			if (articleDTO != null){
+				articleDTOS.add(articleDTO);
+			}
+		}
+		return ArticleCollectionDTO.builder()
+				.articles(articleDTOS)
+				.build();
+	}
 	
 
 	@Override
@@ -78,7 +94,7 @@ public class SimpleArticleService implements ArticleService {
 	}
 
 	@Override public ArticlePageDTO getSearchArticlePage(long pageNumber, String query) {
-		return this.articleMapper.domainPage2dto(this.articleRepository.findByPublishedTrueAndTitleIsContaining(PageRequest.of((int) pageNumber, 5), query));
+		return this.articleMapper.domainPage2dto(this.articleRepository.findByPublishedTrueAndTitleIgnoreCaseIsContaining(PageRequest.of((int) pageNumber, 5), query));
 	}
 
 	@Override

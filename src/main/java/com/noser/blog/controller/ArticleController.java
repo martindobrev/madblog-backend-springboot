@@ -16,6 +16,7 @@ import javax.validation.Valid;
 
 import java.security.Principal;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Api(description = "Controller responsible for handling article actions (just a test action)", tags = "Article")
 @RestController
@@ -35,6 +36,12 @@ public class ArticleController {
 	@GetMapping("/articles")
 	public ArticleCollectionDTO getAllArticles() {
 		return this.articleService.getAllArticles(false);
+	}
+
+	@GetMapping("/listSearchedArticles/{nameQuery}")
+    public ArticleCollectionDTO getAllSearchedArticles(@PathVariable String nameQuery){
+		System.out.println(nameQuery);
+	    return this.articleService.getAllArticlesBySearchTitle(nameQuery);
 	}
 
 	@GetMapping("/complete-articles")
@@ -90,6 +97,8 @@ public class ArticleController {
 	public ArticleInfoDTO getArticleInfo() {
 		return this.articleService.getArticleInfo();
 	}
+
+
 	
 	
 	
