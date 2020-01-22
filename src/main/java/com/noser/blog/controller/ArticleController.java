@@ -63,7 +63,7 @@ public class ArticleController {
 	@GetMapping("/articles/page/{pageNumber}")
 	public ArticlePageDTO getArticlePage(@PathVariable Long pageNumber, @RequestParam("name") Optional<String> nameQuery) {
 		if (nameQuery.isPresent()){
-			return this.articleService.getSearchArticlePage(pageNumber,nameQuery.get());
+			return this.articleService.getAllPublishedArticlesBySearchAllFields(pageNumber,nameQuery.get());
 		}
 		return this.articleService.getArticlePage(pageNumber.intValue());
 	}

@@ -24,4 +24,5 @@ public interface ArticleService {
 
   // TODO: Change the return type to ArticlePageDTO so that paging also works for pages
   ArticleCollectionDTO getAllArticlesBySearchTitle(String searchQuery);
+  ArticlePageDTO getAllPublishedArticlesBySearchAllFields(long pageNumber, String searchQuery);
 }

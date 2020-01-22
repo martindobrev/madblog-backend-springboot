@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.lang.reflect.UndeclaredThrowableException;
 
+import com.noser.blog.api.ArticlePageDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +41,8 @@ import com.noser.blog.security.UnauthorizedException;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SimpleArticleServiceIT {
-	
+
+
 	/**
 	 * Test configuration to mock Keycloak Service
 	 */
@@ -212,6 +214,44 @@ public class SimpleArticleServiceIT {
 		articleService.editArticle(changedArticle);
 	}
 
+	@DisplayName("Test that search checks the article title the correct amount of matches")
+	@Test
+	public void testSearchChecksArticleTitleAndReturnsAllMatches(){
+
+		//give - initial data articles are present
+
+		//when
+		//when
+		final ArticleCollectionDTO searchResults =
+				articleService.getAllArticlesBySearchTitle("end development");
+
+		//then
+		assertNotNull(searchResults);
+		assertNotNull(searchResults.getArticles());
+		assertEquals(2,searchResults.getArticles().size());
+		assertEquals("Backend development tutorials (Spring Boot 2)",searchResults.getArticles().get(0).getTitle());
+		assertEquals("Frontend development tutorial (Angular)",searchResults.getArticles().get(1).getTitle());
+	}
+
+	@DisplayName("Test that search checks the article title the correct amount of matches CASE INSENSITIVE")
+	@Test
+	public void testSearchChecksArticleTitleAndReturnsAllMatchesCaseInsensitive(){
+
+		//give - initial data articles are present
+
+		//when
+		//when
+		final ArticleCollectionDTO searchResults =
+				articleService.getAllArticlesBySearchTitle("DEVElopMENT");
+
+		//then
+		assertNotNull(searchResults);
+		assertNotNull(searchResults.getArticles());
+		assertEquals(2,searchResults.getArticles().size());
+		assertEquals("Backend development tutorials (Spring Boot 2)",searchResults.getArticles().get(0).getTitle());
+		assertEquals("Frontend development tutorial (Angular)",searchResults.getArticles().get(1).getTitle());
+	}
+
 	@DisplayName("Test that search checks the article title")
 	@Test
 	public void testSearchChecksArticleTitle() {
@@ -259,7 +299,7 @@ public class SimpleArticleServiceIT {
 		assertNotNull(searchResults);
 		assertNotNull(searchResults.getArticles());
 		assertEquals(1, searchResults.getArticles().size());
-		assertEquals("Frontend development tutorial (Angular)", searchResults.getArticles().get(0).getTitle());
+		assertEquals("Backend development tutorials (Spring Boot 2)", searchResults.getArticles().get(0).getTitle());
 	}
 
 	@DisplayName("Test that search also checks the subtitle property CASE INSENSITIVE")
@@ -275,7 +315,23 @@ public class SimpleArticleServiceIT {
 		assertNotNull(searchResults);
 		assertNotNull(searchResults.getArticles());
 		assertEquals(1, searchResults.getArticles().size());
-		assertEquals("Frontend development tutorial (Angular)", searchResults.getArticles().get(0).getTitle());
+		assertEquals("Backend development tutorials (Spring Boot 2)", searchResults.getArticles().get(0).getTitle());
+	}
+
+	@DisplayName("Test that search also checks the subtitle property")
+	@Test
+	public void testSearchAlsoIncludesSubtitles1() {
+		// given - initial data articles are present
+
+		// when
+		final ArticleCollectionDTO searchResults =
+				articleService.getAllArticlesBySearchTitle("city");
+
+		// then
+		assertNotNull(searchResults);
+		assertNotNull(searchResults.getArticles());
+		assertEquals(1, searchResults.getArticles().size());
+		assertEquals("Whether commuting to work or just cruising through the city - riding a bike is always fun!", searchResults.getArticles().get(0).getSubtitle());
 	}
 
 	@DisplayName("Test that search also searches the content of articles")
@@ -309,5 +365,32 @@ public class SimpleArticleServiceIT {
 		assertEquals(1, searchResults.getArticles().size());
 		assertEquals("Our tech stack", searchResults.getArticles().get(0).getTitle());
 	}
-	
+
+
+	@DisplayName("Test that searchByAllFields return correct result when searching with authorId")
+	@Test
+	public void getAllPublishedArticlesBySearchAuthorId() {
+
+		final ArticlePageDTO searchResult =
+				articleService.getAllPublishedArticlesBySearchAllFields(0,"danIEL");
+
+		assertNotNull(searchResult);
+		assertNotNull(searchResult.getArticles());
+		assertEquals(2, searchResult.getArticles().size());
+		assertEquals("daniel",searchResult.getArticles().get(0).getAuthorId().toLowerCase());
+	}
+
+
+	@DisplayName("Test that searchByAllFields return correct result when searching with authorId")
+	@Test
+	public void returnNullWhenNoArticlesFoundBySearchByAuthorId() {
+
+		final ArticlePageDTO searchResult =
+				articleService.getAllPublishedArticlesBySearchAllFields(0,"noone");
+
+		assertNotNull(searchResult);
+		assertNotNull(searchResult.getArticles());
+		assertEquals(0, searchResult.getArticles().size());
+	}
+
 }

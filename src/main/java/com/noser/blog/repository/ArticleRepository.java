@@ -13,11 +13,13 @@ import java.util.List;
 @Repository
 public interface ArticleRepository extends PagingAndSortingRepository<Article, Long> {
   List<Article> findAllByOrderByCreatedDesc();
-  List<Article> findAllByTitleIgnoreCaseIsContaining(String searchedTitle);
+//  List<Article> findAllByTitleIgnoreCaseIsContaining(String searchedTitle);
+  List<Article> findAllByTitleIgnoreCaseIsContainingOrSubtitleIgnoreCaseIsContainingOrContentIgnoreCaseIsContaining(String searchedTitle,String searchedSubTitle,String searchedContent);
   List<Article> findByAuthorId(String authorId);
   List<Article> findByPublished(boolean published);
   List<Article> findByFeatured(boolean featured);
   //List<Article> findAll();
   Page<Article> findByPublishedTrue(Pageable pageable);
   Page<Article> findByPublishedTrueAndTitleIgnoreCaseIsContaining(Pageable pageable, String searchedTitle);
+  Page<Article> findByPublishedTrueAndTitleIgnoreCaseIsContainingOrSubtitleIgnoreCaseIsContainingOrContentIgnoreCaseIsContainingOrAuthorIdIgnoreCaseIsContaining(Pageable pageable, String searchedTitle, String searchedSubtitle, String searchedContent, String authorId);
 }
