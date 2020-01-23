@@ -367,7 +367,7 @@ public class SimpleArticleServiceIT {
 	}
 
 
-	@DisplayName("Test that searchByAllFields return correct result when searching with authorId")
+	@DisplayName("Test that searchByAllFields return correct result when searching with authorId CASE INSENSITIVE")
 	@Test
 	public void getAllPublishedArticlesBySearchAuthorId() {
 
@@ -381,7 +381,7 @@ public class SimpleArticleServiceIT {
 	}
 
 
-	@DisplayName("Test that searchByAllFields return correct result when searching with authorId")
+	@DisplayName("Test searchByAllFields with non-existing keyword")
 	@Test
 	public void returnNullWhenNoArticlesFoundBySearchByAuthorId() {
 
@@ -392,5 +392,79 @@ public class SimpleArticleServiceIT {
 		assertNotNull(searchResult.getArticles());
 		assertEquals(0, searchResult.getArticles().size());
 	}
+
+	@DisplayName("Test searchByAllFields with parentheses (")
+	@Test
+	public void searchWithParenthesesLeft() {
+
+		final ArticlePageDTO searchResult =
+				articleService.getAllPublishedArticlesBySearchAllFields(0,"(");
+
+		assertNotNull(searchResult);
+		assertNotNull(searchResult.getArticles());
+		assertEquals(4, searchResult.getArticles().size());
+	}
+
+	@DisplayName("Test searchByAllFields with parentheses )")
+	@Test
+	public void searchWithParenthesesRight() {
+
+		final ArticlePageDTO searchResult =
+				articleService.getAllPublishedArticlesBySearchAllFields(0,")");
+
+		assertNotNull(searchResult);
+		assertNotNull(searchResult.getArticles());
+		assertEquals(5, searchResult.getArticles().size());
+	}
+
+	@DisplayName("Test searchByAllFields with parentheses [")
+	@Test
+	public void searchWithSquareBracketLeft() {
+
+		final ArticlePageDTO searchResult =
+				articleService.getAllPublishedArticlesBySearchAllFields(0,"[");
+
+		assertNotNull(searchResult);
+		assertNotNull(searchResult.getArticles());
+		assertEquals(3, searchResult.getArticles().size());
+	}
+
+	@DisplayName("Test searchByAllFields with parentheses ]")
+	@Test
+	public void searchWithSquareBracketRight() {
+
+		final ArticlePageDTO searchResult =
+				articleService.getAllPublishedArticlesBySearchAllFields(0,"]");
+
+		assertNotNull(searchResult);
+		assertNotNull(searchResult.getArticles());
+		assertEquals(3, searchResult.getArticles().size());
+	}
+
+	@DisplayName("Test searchByAllFields with parentheses {")
+	@Test
+	public void searchWithCurlyBracketLeft() {
+
+		final ArticlePageDTO searchResult =
+				articleService.getAllPublishedArticlesBySearchAllFields(0,"{");
+
+		assertNotNull(searchResult);
+		assertNotNull(searchResult.getArticles());
+		assertEquals(0, searchResult.getArticles().size());
+	}
+
+	@DisplayName("Test searchByAllFields with parentheses }")
+	@Test
+	public void searchWithCurlyBracketRight() {
+
+		final ArticlePageDTO searchResult =
+				articleService.getAllPublishedArticlesBySearchAllFields(0,"}");
+
+		assertNotNull(searchResult);
+		assertNotNull(searchResult.getArticles());
+		assertEquals(0, searchResult.getArticles().size());
+	}
+
+
 
 }

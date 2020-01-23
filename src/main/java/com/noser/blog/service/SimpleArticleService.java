@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import lombok.extern.java.Log;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ import com.noser.blog.security.CheckManageArticles;
 import com.noser.blog.security.CheckViewArticlePermission;
 import com.noser.blog.security.UnauthorizedException;
 
+@Log
 @Service
 @EnableAspectJAutoProxy
 public class SimpleArticleService implements ArticleService {
@@ -35,12 +37,15 @@ public class SimpleArticleService implements ArticleService {
 	private final ArticleRepository articleRepository;
 
 	private final ArticleMapper articleMapper;
+
+	private final KeycloakService keycloakService;
 	
 	private final static int ARTICLE_PAGE_DEFAULT_SIZE = 5;
 
-	public SimpleArticleService(ArticleRepository articleRepository, ArticleMapper articleMapper) {
+	public SimpleArticleService(ArticleRepository articleRepository, ArticleMapper articleMapper, KeycloakService keycloakService) {
 		this.articleRepository = articleRepository;
 		this.articleMapper = articleMapper;
+		this.keycloakService = keycloakService;
 	}
 
 	@Override
@@ -106,7 +111,8 @@ public class SimpleArticleService implements ArticleService {
 		} catch (ClassCastException exception) {
 			
 		}
-		article.setAuthorId(principal.getName());
+		log.warning(String.format("USERNAME WHILE CREATING ARTICLE %s",keycloakService.getUserUsername(principal.getName())));
+		article.setAuthorId(keycloakService.getUserUsername(principal.getName()));
 		article.setCreated(LocalDateTime.now());
 		return articleMapper.domain2dto(articleRepository.save(article), true);
 	}

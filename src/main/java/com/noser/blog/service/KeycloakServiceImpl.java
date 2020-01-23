@@ -63,4 +63,19 @@ public class KeycloakServiceImpl implements KeycloakService {
       return null;
     }
   }
+
+  @Override
+  public String getUserUsername(final String id){
+      log.info("Get user by id {}",id);
+      try {
+          final UserResource user = this.keycloak.realm(this.blogProperties.getRealm()).users().get(id);
+          final UserRepresentation userRepresentation = user.toRepresentation();
+          log.info("Username {}",userRepresentation.getUsername());
+          return userRepresentation.getUsername();
+      }catch (Exception e){
+          log.info("Failed to get user username: {}",e.getMessage());
+      }
+      return null;
+  }
+
 }
