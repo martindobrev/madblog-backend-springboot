@@ -5,9 +5,11 @@ import com.noser.blog.domain.BlogFileView;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface FileRepository extends CrudRepository<BlogFile, Long> {
@@ -20,4 +22,10 @@ public interface FileRepository extends CrudRepository<BlogFile, Long> {
 
 	@Query("SELECT new com.noser.blog.domain.BlogFileView(b.id, b.name, b.size, b.authorId, b.fileType, b.uploaded) FROM BlogFile b WHERE LOWER(b.name) LIKE CONCAT('%',:searchName,'%')")
 	Page<BlogFileView> findBlobFilePageByName(Pageable pageable, String searchName);
+
+	@Transactional
+	@Modifying
+	@Query("delete from BlogFile b where b.id = :id")
+	int delete(Long id);
+
 }
