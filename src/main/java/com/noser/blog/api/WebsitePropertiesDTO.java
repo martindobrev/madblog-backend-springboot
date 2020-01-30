@@ -14,4 +14,5 @@ public class WebsitePropertiesDTO {
 	private String title;
 	private String logoUrl;
 	private String version;
+	private String aboutUs;
 }

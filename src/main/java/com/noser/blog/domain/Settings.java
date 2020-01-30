@@ -2,6 +2,7 @@ package com.noser.blog.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +19,8 @@ public class Settings {
 
 	@Id
 	private String name;
-	
+
+	@Lob
 	private String value;
 	
 }

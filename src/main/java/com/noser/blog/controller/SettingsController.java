@@ -28,6 +28,7 @@ public class SettingsController {
 				.title(settingsService.getWebsiteTitle())
 				.version(settingsService.getVersion())
 				.logoUrl(settingsService.getLogoUrl())
+				.aboutUs(settingsService.getAboutUs())
 				.build();
 	}
 	
@@ -36,6 +37,7 @@ public class SettingsController {
 		this.settingsService.setWebsiteName(websiteProperties.getName());
 		this.settingsService.setWebsiteTitle(websiteProperties.getTitle());
 		this.settingsService.setLogoUrl(websiteProperties.getLogoUrl());
+		this.settingsService.setAboutUs(websiteProperties.getAboutUs());
 		return websiteProperties;
 	}
 }

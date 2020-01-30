@@ -77,4 +77,22 @@ public class DBSettingsService implements SettingsService {
 		this.settingsRepository.save(settings);
 	}
 
+	@Override
+	public String getAboutUs(){
+		if (!this.settingsRepository.existsById(SettingsService.ABOUT_US)) {
+			return null;
+		}
+		return this.settingsRepository
+				.findOneByName(SettingsService.ABOUT_US).getValue();
+	}
+
+	@Override
+	public void setAboutUs(String aboutUs){
+		Settings settings = Settings.builder()
+				.name(SettingsService.ABOUT_US)
+				.value(aboutUs)
+				.build();
+		this.settingsRepository.save(settings);
+	}
+
 }

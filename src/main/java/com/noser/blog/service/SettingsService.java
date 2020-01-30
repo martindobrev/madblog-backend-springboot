@@ -6,7 +6,8 @@ public interface SettingsService {
 	String WEBSITE_TITLE = "WEBSITE_TITLE";
 	String VERSION = "VERSION";
 	String LOGO_URL = "LOGO_URL";
-	
+	String ABOUT_US = "ABOUT_US";
+
 	String getWebsiteName();
 	void setWebsiteName(final String name);
 	
@@ -17,5 +18,8 @@ public interface SettingsService {
 	
 	String getLogoUrl();
 	void setLogoUrl(final String url);
+
+	String getAboutUs();
+	void setAboutUs(final String aboutUs);
 
 }
