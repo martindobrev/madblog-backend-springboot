@@ -1,47 +1,31 @@
 version: "3"
 services:
-  web:
-    image: maddob/blog-backend:0.3.5
-    #deploy:
-    #  replicas: 3
-    #  resources:
-    #    limits:
-    #      cpus: "0.1"
-    #      memory: 500M
-    #  restart_policy:
-    #    condition: on-failure
-    ports:
-      - 4000:8000
-    networks:
-      - webnet
-     
-  postgres:
-    image: postgres:11
-    environment:
-      POSTGRES_PASSWORD: blog_secret
-      POSTGRES_USER: blog_user
-      POSTGRES_DB: blog
-    ports:
-      - "5432:5432"
-    restart: always
-    networks:
-      - webnet
-    
-#  mysql:
-#    image: mysql/mysql-server:5.7
-#    environment:
-#      MYSQL_DATABASE: blog
-#      MYSQL_USER: blog_user
-#      MYSQL_PASSWORD: blog_secret
+#  angularfrontend:
+#    image: maddob/blog_frontend:dev
 #    ports:
-#      - "3306:3306"
-#    restart: always
-#    volumes:
-#      - ./docker:/var/lib/mysql
+#      - 4200:4200
 #    networks:
 #      - webnet
 
-   
+  springbootbackend:
+    image: maddob/blog_backend:0.3.8
+    ports:
+      - 8000:8000
+    networks:
+      - webnet
 
+  keycloak:
+    volumes:
+      - /home/martin/Projects/madblog-backend-springboot/src/main/resources/keycloak/Demo-realm.json:/tmp/Demo-realm.json
+    image: jboss/keycloak:8.0.1
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_IMPORT=/tmp/Demo-realm.json
+#-e KEYCLOAK_IMPORT=/tmp/Demo-realm.json -v /home/martin/Projects/madblog-backend-springboot/src/main/resources/keycloak/Demo-realm.json:/tmp/Demo-realm.json
+    ports:
+      - 8080:8080
+    networks:
+      - webnet
 networks:
   webnet:
