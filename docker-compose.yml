@@ -8,13 +8,15 @@ services:
       - webnet
 
   springbootbackend:
-    image: maddob/blog_backend:0.3.8
+    image: maddob/blog_backend_docker_compose:0.3.8
+    container_name: blogbackend
     ports:
       - 8000:8000
     networks:
       - webnet
 
   keycloak:
+    container_name: keycloak
     volumes:
       - /Users/martin/Workspaces/NB/Playground/blog/src/main/resources/keycloak/Demo-realm.json:/tmp/Demo-realm.json
     image: jboss/keycloak:8.0.1
@@ -22,7 +24,6 @@ services:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
       - KEYCLOAK_IMPORT=/tmp/Demo-realm.json
-#-e KEYCLOAK_IMPORT=/tmp/Demo-realm.json -v /home/martin/Projects/madblog-backend-springboot/src/main/resources/keycloak/Demo-realm.json:/tmp/Demo-realm.json
     ports:
       - 8080:8080
     networks:
