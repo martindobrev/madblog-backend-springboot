@@ -1,11 +1,11 @@
 version: "3"
 services:
-#  angularfrontend:
-#    image: maddob/blog_frontend:dev
-#    ports:
-#      - 4200:4200
-#    networks:
-#      - webnet
+  angularfrontend:
+    image: maddob/blog_frontend_nginx:latest
+    ports:
+      - 4200:80
+    networks:
+      - webnet
 
   springbootbackend:
     image: maddob/blog_backend:0.3.8
@@ -16,7 +16,7 @@ services:
 
   keycloak:
     volumes:
-      - /home/martin/Projects/madblog-backend-springboot/src/main/resources/keycloak/Demo-realm.json:/tmp/Demo-realm.json
+      - /Users/martin/Workspaces/NB/Playground/blog/src/main/resources/keycloak/Demo-realm.json:/tmp/Demo-realm.json
     image: jboss/keycloak:8.0.1
     environment:
       - KEYCLOAK_USER=admin
