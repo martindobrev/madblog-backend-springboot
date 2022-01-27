@@ -8,4 +8,4 @@ docker run -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -e KEYCLOAK_IMPORT=
 '''
 
 
-After that login to localhost:8080 with admin/admin and import the users located in Demo-users-0.json from the web  
+After that login to localhost:8080 with admin/admin and import the users located in Demo-users-0.json from the web      

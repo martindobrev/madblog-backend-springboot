@@ -55,7 +55,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		super.configure(http);
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
 		http.csrf().disable();
 		http.headers().frameOptions().disable(); // must be disabled for H2 console
 		if (!this.blogProperties.isSecurityDisabled()) {

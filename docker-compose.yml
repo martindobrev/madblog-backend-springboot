@@ -1,24 +1,28 @@
-version: "3"
+version: "3.9"
 services:
-  angularfrontend:
-    image: maddob/blog_frontend_nginx:latest
+  frontend:
+    image: maddob/blog-frontend:0.1.0
+    container_name: blogfrontend
     ports:
       - 4200:80
-    networks:
-      - webnet
+    depends_on:
+      - backend
 
-  springbootbackend:
-    image: maddob/blog_backend_docker_compose:0.3.8
+  backend:
+    image: maddob/blog-backend:0.3.9
     container_name: blogbackend
     ports:
       - 8000:8000
-    networks:
-      - webnet
+    environment:
+      - BLOG_SECURITY_DISABLED=false
+      - KEYCLOAK_AUTH_SERVER_URL=http://keycloak:8080/auth
+#    depends_on:
+#      - keycloak
 
   keycloak:
     container_name: keycloak
     volumes:
-      - /Users/martin/Workspaces/NB/Playground/blog/src/main/resources/keycloak/Demo-realm.json:/tmp/Demo-realm.json
+      - /Users/martindobrev/Workspaces/Akros/madblog-backend-springboot/src/main/resources/keycloak/Demo-realm.json:/tmp/Demo-realm.json
     image: jboss/keycloak:8.0.1
     environment:
       - KEYCLOAK_USER=admin
@@ -26,7 +30,3 @@ services:
       - KEYCLOAK_IMPORT=/tmp/Demo-realm.json
     ports:
       - 8080:8080
-    networks:
-      - webnet
-networks:
-  webnet:
