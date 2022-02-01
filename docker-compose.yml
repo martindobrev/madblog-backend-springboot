@@ -23,7 +23,7 @@ services:
     container_name: keycloak
     volumes:
       - /Users/martindobrev/Workspaces/Akros/madblog-backend-springboot/src/main/resources/keycloak/Demo-realm.json:/tmp/Demo-realm.json
-    image: jboss/keycloak:8.0.1
+    image: jboss/keycloak:16.1.1
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
