@@ -1,7 +1,10 @@
 package com.noser.blog.config;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,21 +40,25 @@ public class SwaggerConfig {
 	}
 	
 	private ApiInfo metaData() {
-		Contact contact = new Contact("Marto Angulara", "", "martin.dobrev@akros.ch");
-		
-		return new ApiInfo("Angular Tutorial REST API",
-				"This is the REST API that is to be used during the Angular Basics course. "
-				+ "The API provides the basic functions and elements to build a simple blog. <br/>"
-				+ "Building parts of a simple blog webpage are PAGE, ARTICLE and FILE. "
-				+ "For simplicity only IMAGES are allowed to be saved. <br/>"
-				+ "Usually all methods that don't modify the content will be accessible without authentication. "
-				+ "In order to change the content you will have to be authenticated and have the respective user rights to modify the content. "
-				+ "User authentication is done via keycloak - an open source user management server. Detailed description will be added later",
+		Contact contact = new Contact("Martin Dobrev", "", "martin.dobrev@noser-bulgaria.com");
+
+
+		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("frontend-interview/task-description.html");
+		String description = "";
+
+		try {
+			description = IOUtils.toString(resourceAsStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		};
+
+		return new ApiInfo("Noser Bulgaria Frontend Interview REST API",
+				description,
 				"1.0",
-				"http://noser-bulgaria.com",
+				"",
 				contact,
-				"LICENCE (TO BE DEFINED, CURRENTLY ONLY NOSER BULGARIA EMPLOYEES ARE ALLOWED TO USE THE API)",
-				"http://noser-bulgaria.com/tutorials/licence",
+				"",
+				"",
 				new ArrayList<>()
 				);
 	}

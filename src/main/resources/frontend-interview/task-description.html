@@ -1,0 +1,41 @@
+<h1>Welcome to our Frontend Developer Task</h1>
+
+<h3>Why a programming task?</h3>
+<p>
+  In order to get an impression of your coding skills we are asking you to do what you do best - write some code. Solving the following task will give us a basic understanding of your style and will be used as a basis for further questions and open technical discussion.
+  There is no right or wrong solution, we just want to see how you will approach the problem.
+</p>
+
+<h3>The Task</h3>
+<p>
+  Create a simple web application with the following pages:
+</p>
+<ul>
+  <li>Home - displays a menu with all available pages. Also displays a list of blog articles. Basically it is an entry point for the blog itself.</li>
+  <li>Webpage - when clicking on the menu with the available pages, the selected page shall be loaded.</li>
+  <li>Blog details page - Articles on the main page shall not be displayed completely. Clicking the title of each article will display the full content on a separate page</li>
+</ul>
+
+
+<h3>Instructions</h3>
+
+<h5>Getting data about articles</h5>
+<p>To get a list of articles, you can use one of the endpoints of the article controller:</p>
+<ul>
+  <li><code>/api/v1/articles</code> - gets a list of all articles</li>
+  <li><code>/api/v1/articles/page/{pageNumber}</code> - gets a list of all articles separated in pages</li>
+</ul>
+
+<p>To get a single article, you can use the endpoint <code>/api/v1/articles/{articleId}</code></p>
+<i>Note that when you get a list of articles, the htmlContent field will be empty. HTML will be rendered only when getting a single article.</i>
+
+<h5>Getting available web pages</h5>
+<ul>
+  <li><code>/api/v1/menu</code> - get a list of available pages for the menu.</li>
+  <li><code>/api/v1/page/{slug} - get a single page by it's slug (A URL slug is the part of the URL after the last backslash)</code></li>
+</ul>
+
+
+<h5>Additional information</h5>
+<p>The API is based on an old tutorial project, so there are some additional controllers and endpoints you won't need. You can simply ignore them. </p>
+<p>All articles and pages contain some images. They are controlled by the FileController endpoints. You will probably not directly need them, they will usually work out-of-the-box.</p>

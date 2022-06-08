@@ -5,23 +5,6 @@ DANIEL
 true
 false
 yyyy-MM-dd HH:mm|2018-10-30 13:30
-### WE ARE JAVA EXPERTS!!!
-
-bdsabfsnbadffdsanbfadnsbfas
-
-
-- Spring Boot
-- Kafka
-- Camel
-
-
-* SQL
-* NOSQL
-* Graph DB
-
-
-Tesing
-
 
 ![tech stack image](/api/v1/files/2)
 
