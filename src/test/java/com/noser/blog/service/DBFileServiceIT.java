@@ -35,7 +35,7 @@ class DBFileServiceIT {
   @Test
   void getSearchFilePageNoQuery() {
     // when
-    BlogFilePageDTO searchFilePage = dbFileService.getSearchFilePage(0, null);
+    BlogFilePageDTO searchFilePage = dbFileService.getSearchFilePage(1, null);
 
     // then
     assertNotNull(searchFilePage);
