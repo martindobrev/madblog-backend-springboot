@@ -53,7 +53,7 @@ public class BootstrapSomeArticleData implements ApplicationListener<Application
 			addImages();
 		}
 		
-		if (this.articleRepository.count() == 0) {			
+		if (this.articleRepository.findAllByOrderByCreatedDesc().size() == 0) {
 			addArticles();
 		}
 		

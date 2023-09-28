@@ -1,18 +1,13 @@
 package com.noser.blog.controller;
 
-import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.noser.blog.api.WebsitePropertiesDTO;
 import com.noser.blog.service.SettingsService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
-@Api(tags = "Settings")
+@Tag(name = "Settings")
 public class SettingsController {
 
 	private final SettingsService settingsService;

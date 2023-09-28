@@ -2,14 +2,17 @@ package com.noser.blog.controller;
 
 import com.noser.blog.api.UserDTO;
 import com.noser.blog.service.KeycloakService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/")
-@Api(tags = "UserInfo")
+@Tag(name = "UserInfo")
 public class UserInfoController {
 
   private final KeycloakService keycloakService;

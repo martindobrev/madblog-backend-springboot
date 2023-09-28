@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import com.noser.blog.api.BlogFilePageDTO;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.http.entity.ContentType;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/")
-@Api(tags = "File")
+@Tag(name = "File")
 public class FileController {
 
   private final FileService fileService;

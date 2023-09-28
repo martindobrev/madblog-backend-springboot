@@ -1,11 +1,7 @@
 package com.noser.blog.config;
 
+import com.hazelcast.config.*;
 import org.springframework.context.annotation.Bean;
-
-import com.hazelcast.config.Config;
-import com.hazelcast.config.EvictionPolicy;
-import com.hazelcast.config.MapConfig;
-import com.hazelcast.config.MaxSizeConfig;
 
 public class HazelcastCacheConfig {
 	
@@ -16,8 +12,7 @@ public class HazelcastCacheConfig {
                 .addMapConfig(
                         new MapConfig()
                                 .setName("configuration")
-                                .setMaxSizeConfig(new MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
-                                .setEvictionPolicy(EvictionPolicy.LRU)
+                                .setEvictionConfig(new EvictionConfig().setMaxSizePolicy(MaxSizePolicy.FREE_HEAP_SIZE))
 .setTimeToLiveSeconds(-1));
         return config;
     }
