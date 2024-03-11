@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
@@ -30,11 +31,13 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
-		http.authorizeHttpRequests((requests) -> requests
-				.requestMatchers(mvc.pattern("/api/**")).permitAll()
-				.requestMatchers(mvc.pattern("/actuator/**")).permitAll()
-				.requestMatchers(mvc.pattern("/**")).permitAll());
-				//.requestMatchers(mvc.pattern("/**")).authenticated());
+		if (blogProperties.isSecurityDisabled()) {
+			http.authorizeHttpRequests(requests -> requests
+					.requestMatchers("/api/**").permitAll()
+					.requestMatchers("/actuator/**").permitAll()
+					.requestMatchers("/**").permitAll())
+					.csrf(AbstractHttpConfigurer::disable);
+		}
 		return http.build();
 	}
 }

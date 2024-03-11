@@ -7,16 +7,17 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
-
 @Configuration
 public class SwaggerConfig {
 
-	@SuppressWarnings("unchecked")
+	private static final Logger LOGGER = LoggerFactory.getLogger(SwaggerConfig.class);
+
 	@Bean
 	public GroupedOpenApi api() {
 		return GroupedOpenApi.builder()
@@ -26,8 +27,10 @@ public class SwaggerConfig {
 				.pathsToExclude("/error", "/actuator/**", "/management*", "/messages/**")
 				.build();
 	}
-	
-	private OpenAPI metaData() {
+
+
+	@Bean
+	public OpenAPI metaData() {
 
 		Contact contact = new Contact()
 				.name("Martin Dobrev")
@@ -40,8 +43,8 @@ public class SwaggerConfig {
 		try {
 			description = IOUtils.toString(resourceAsStream);
 		} catch (IOException e) {
-			e.printStackTrace();
-		};
+			LOGGER.warn("Frontend interview task description not available in frontend-interview/task-description.html");
+		}
 
 		return new OpenAPI().info(new Info().title("Noser Bulgaria Frontend Interview REST API")
 				.description(description)

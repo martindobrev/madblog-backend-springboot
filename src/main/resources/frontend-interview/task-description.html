@@ -8,34 +8,46 @@
 
 <h3>The Task</h3>
 <p>
-  Create a simple web application with the following pages:
+  Create an angular file manager application with the following features:
 </p>
 <ul>
-  <li>Home - displays a menu with all available pages. Also displays a list of blog articles. Basically it is an entry point for the blog itself.</li>
-  <li>Webpage - when clicking on the menu with the available pages, the selected page shall be loaded.</li>
-  <li>Blog details page - Articles on the main page shall not be displayed completely. Clicking the title of each article will display the full content on a separate page</li>
+  <li>The file manager shows available images</li>
+  <li>Each image must be represented by a thumbnail, as well as it's name and size</li>
+  <li>The file manager shall include a file upload area, that is triggered either by a button (standard behavior) or directly by dran-and-dropping files</li>
+  <li>Multiple file upload shall be possible</li>
+  <li>File upload progress is shown in some way (numbers, percentage, progress bar, ...)</li>
+  <li>File upload status is visible (error or success)</li>
+ </ul>
+
+<h3>Technical Requirements</h3>
+<ul>
+  <li>Angular 14+</li>
+  <li>UI library of your choice (or custom CSS)</li>
+  <li></li>
 </ul>
 
 
 <h3>Instructions</h3>
 
-<h5>Getting data about articles</h5>
-<p>To get a list of articles, you can use one of the endpoints of the article controller:</p>
+<h5>Getting data about files</h5>
+<p>To get a list of files, you can use one the following endpoints</p>
 <ul>
-  <li><code>/api/v1/articles</code> - gets a list of all articles</li>
-  <li><code>/api/v1/articles/page/{pageNumber}</code> - gets a list of all articles separated in pages</li>
+  <li><code>/api/v1/files</code> - gets a list of all files</li>
+  <li><code>/api/v1/files/{id}</code> - gets a list of all articles separated in pages</li>
 </ul>
 
-<p>To get a single article, you can use the endpoint <code>/api/v1/articles/{articleId}</code></p>
-<i>Note that when you get a list of articles, the htmlContent field will be empty. HTML will be rendered only when getting a single article.</i>
-
-<h5>Getting available web pages</h5>
+<p>
+  To get a thumbnail of a desired size, you can use the parameter <bold>size</bold> on the <code>/api/v1/files/{id}</code>.
+  For example size=100 will return a thumbnail of max size 100x100px.
+</p>
+<h5>Uploading a file</h5>
+<p>To upload a file, you can use the following endpoint:</p>
 <ul>
-  <li><code>/api/v1/menu</code> - get a list of available pages for the menu.</li>
-  <li><code>/api/v1/page/{slug} - get a single page by it's slug (A URL slug is the part of the URL after the last backslash)</code></li>
+  <li><code>/api/v1/files</code> - POST request as multipart file</li>
+  <li>The file must be </li>
 </ul>
-
 
 <h5>Additional information</h5>
-<p>The API is based on an old tutorial project, so there are some additional controllers and endpoints you won't need. You can simply ignore them. </p>
-<p>All articles and pages contain some images. They are controlled by the FileController endpoints. You will probably not directly need them, they will usually work out-of-the-box.</p>
+<p>Please note that the REST endpoint enables only a single file upload - you will have to implement the multiple file upload with angular!</p>
+<p>Supported file types are: PNG, JPEG, GIF and PDF (for documents)</p>
+<p>Max upload file size is: 5MB</p>

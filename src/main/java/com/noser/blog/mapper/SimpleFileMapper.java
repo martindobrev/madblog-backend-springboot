@@ -23,6 +23,8 @@ public class SimpleFileMapper implements FileMapper {
         .size(blogFile.getSize())
         .name(blogFile.getName())
         .id(blogFile.getId())
+        .uploaded(blogFile.getUploaded())
+        .fileType(blogFile.getFileType())
         .build();
   }
 

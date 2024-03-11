@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import com.noser.blog.api.BlogFilePageDTO;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.http.entity.ContentType;
 import org.springframework.cache.annotation.Cacheable;
@@ -37,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/")
-@Tag(name = "File")
+@Tag(name = "File", description = "Controller responsible for handling file operations")
 public class FileController {
 
   private final FileService fileService;
@@ -47,6 +48,7 @@ public class FileController {
     this.fileService = fileService;
     this.fileMapper = fileMapper;
   }
+
 
   @PostMapping(value = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody BlogFileDTO uploadFile(@RequestParam("file") MultipartFile file, Principal principal, Authentication authentication) throws Exception {
@@ -64,9 +66,14 @@ public class FileController {
     return this.fileMapper.domain2dto(blogFile);
   }
 
+  @Operation(summary = "returns the actual file or it's thumbnail", description = """
+  If size is specified, a thumbnail of the existing image is returned. For example, if you provide size=100, you will get
+  a thumbnail of the file with max-width or max-height = 100px. The aspect ratio of the original image is preserved.
+  All thumbnails are returned in JPEG format. Original PNG or GIF images remain unchanged.
+  """)
   @Cacheable("images")
   @GetMapping(value = "/files/{id}")
-  public @ResponseBody ResponseEntity<byte[]> getFile(@PathVariable Long id, @RequestParam Optional<Integer> size) throws IOException {
+  public @ResponseBody ResponseEntity<byte[]> getFile(@PathVariable Long id, @RequestParam Optional<Integer> size) {
     final BlogFile file = this.fileService.getFile(id);
     final HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -86,6 +93,7 @@ public class FileController {
     return new ResponseEntity<>(file.getData(), httpHeaders, HttpStatus.OK);
   }
 
+  @Operation(summary = "returns information about the available files", description = "Returns only meta information about the files, not the files themselves")
   @GetMapping(value = "/files")
   public @ResponseBody BlogFileCollectionDTO getFiles() {
     final BlogFileCollectionDTO blogFileCollectionDTO = BlogFileCollectionDTO.builder().blogFiles(new ArrayList<>()).build();
@@ -94,11 +102,13 @@ public class FileController {
     return blogFileCollectionDTO;
   }
 
+  @Operation(summary = "deletes a file by id")
   @DeleteMapping(value = "/files/{id}")
   public boolean deleteFile(@PathVariable Long id) {
     return this.fileService.deleteFile(id);
   }
 
+  @Operation(summary = "get file information in pages", description = "Same as /get/files but with pagination")
   @GetMapping(value = "/filepage/{number}")
   public BlogFilePageDTO getFilePage(@PathVariable Long number, @RequestParam("name") Optional<String> nameQuery) {
     if (nameQuery.isPresent()) {
@@ -106,5 +116,4 @@ public class FileController {
     }
     return this.fileService.getFilePage(number);
   }
-
 }
