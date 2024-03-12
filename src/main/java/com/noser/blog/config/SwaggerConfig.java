@@ -32,11 +32,6 @@ public class SwaggerConfig {
 	@Bean
 	public OpenAPI metaData() {
 
-		Contact contact = new Contact()
-				.name("Martin Dobrev")
-				.email("martin.dobrev@noser-bulgaria.com");
-
-
 		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("frontend-interview/task-description.html");
 		String description = "";
 
@@ -48,7 +43,7 @@ public class SwaggerConfig {
 
 		return new OpenAPI().info(new Info().title("Noser Bulgaria Frontend Interview REST API")
 				.description(description)
-				.contact(contact)
+				//.contact(contact)
 				.version("1.0.0")
 				);
 	}

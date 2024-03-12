@@ -1,35 +1,45 @@
-<h1>Welcome to our Frontend Developer Task</h1>
+<h1>Frontend Developer Task - File Manager</h1>
 
-<h3>Why a programming task?</h3>
+<h2>Introduction</h2>
 <p>
-  In order to get an impression of your coding skills we are asking you to do what you do best - write some code. Solving the following task will give us a basic understanding of your style and will be used as a basis for further questions and open technical discussion.
-  There is no right or wrong solution, we just want to see how you will approach the problem.
+  Welcome to our frontend developer task. We believe in assessing your coding skills by giving you the opportunity to showcase your abilities through practical application. This task aims to understand your coding style and will serve as a foundation for further discussions during the interview. Remember, there's no right or wrong solution; we're interested in your approach to problem-solving.
 </p>
 
-<h3>The Task</h3>
+<h2>Objective</h2>
 <p>
-  Create an angular file manager application with the following features:
+  The objective of this task is to create a frontend application that seamlessly integrates with the provided backend API to enable file uploads and management.
 </p>
+
+<h2>Requirements</h2>
 <ul>
-  <li>The file manager shows available images</li>
+  <li>The application shows available images</li>
   <li>Each image must be represented by a thumbnail, as well as it's name and size</li>
-  <li>The file manager shall include a file upload area, that is triggered either by a button (standard behavior) or directly by dran-and-dropping files</li>
+  <li>The application shall include a file upload triggered by a button (standard behavior)</li>
   <li>Multiple file upload shall be possible</li>
   <li>File upload progress is shown in some way (numbers, percentage, progress bar, ...)</li>
   <li>File upload status is visible (error or success)</li>
+  <li>Provide the source code of the frontend application along with any necessary instructions for running the application locally.</li>
  </ul>
-
-<h3>Technical Requirements</h3>
+<h2>Bonus (extra credit)</h2>
 <ul>
-  <li>Angular 14+</li>
-  <li>UI library of your choice (or custom CSS)</li>
-  <li></li>
+  <li>Drag-and-drop file upload</li>
+  <li>Test coverage >80%</li>
+  <li>Responsive design</li>
+  <li>Pagination (endpoint <code>/api/v1/filepage/{number}</code>)</li>
+  <li>Include any additional documentation or notes relevant to the implementation</li>
+</ul>
+
+<h2>Constraints</h2>
+<ul>
+  <li>Use Angular 14+ for frontend development.</li>
+  <li>You are free to choose any styling library/framework of your choice for UI design (e.g., Bootstrap, Material Design).</li>
+  <li>Ensure compatibility with modern web browsers.</li>
 </ul>
 
 
-<h3>Instructions</h3>
+<h2>Examples</h2>
 
-<h5>Getting data about files</h5>
+<h3>Getting data about files</h3>
 <p>To get a list of files, you can use one the following endpoints</p>
 <ul>
   <li><code>/api/v1/files</code> - gets a list of all files</li>
@@ -38,16 +48,24 @@
 
 <p>
   To get a thumbnail of a desired size, you can use the parameter <bold>size</bold> on the <code>/api/v1/files/{id}</code>.
-  For example size=100 will return a thumbnail of max size 100x100px.
+  For example <code>size=100</code> will return a thumbnail of max size 100x100px.
 </p>
-<h5>Uploading a file</h5>
+<h3>Uploading a file</h3>
 <p>To upload a file, you can use the following endpoint:</p>
 <ul>
   <li><code>/api/v1/files</code> - POST request as multipart file</li>
-  <li>The file must be </li>
 </ul>
 
-<h5>Additional information</h5>
+<h3>Additional information</h3>
 <p>Please note that the REST endpoint enables only a single file upload - you will have to implement the multiple file upload with angular!</p>
-<p>Supported file types are: PNG, JPEG, GIF and PDF (for documents)</p>
+<p>All files are supported, but thumbnails are generated only for JPEG (JPG), PNG and GIF</p>
 <p>Max upload file size is: 5MB</p>
+
+
+<h2>Contact information</h2>
+If you have any questions or need clarification regarding the task, please contact us:
+
+<ul>
+  <li><a href="mailto:martin.dobrev@noser-bulgaria.com">Technical questions: Martin Dobrev</a></li>
+  <li><a href="mailto:boyan.dimitrov@noser-bulgaria.com">Other questions: Boyan Dimitrov</a></li>
+</ul>
