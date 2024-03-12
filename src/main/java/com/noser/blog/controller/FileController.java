@@ -50,6 +50,10 @@ public class FileController {
   }
 
 
+  @Operation(summary = "upload a file", description = """
+  Only single file upload is supported. The file must be uploaded as MultipartFile with the name 'file'. Maximal size of the file is 5MB.
+  Uploading bigger files will result in an error.
+  """)
   @PostMapping(value = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody BlogFileDTO uploadFile(@RequestParam("file") MultipartFile file, Principal principal, Authentication authentication) throws Exception {
     log.info("File uploaded: {}", file.getOriginalFilename());
